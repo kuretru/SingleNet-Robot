@@ -9,18 +9,19 @@
     <TableLayout
         android:layout_width="339dp"
         android:layout_height="494dp"
-        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteX="9dp"
         tools:layout_editor_absoluteY="8dp">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textViewServer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="服务器地址：" />
+                android:text="服务器地址："
+                android:textAlignment="textEnd" />
 
             <EditText
                 android:id="@+id/editTextServer"
@@ -28,16 +29,32 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="http://dorm.i5zhen.com:8060/sx" />
+                android:text="http://dorm.i5zhen.com:8080/sx" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/textViewSecret"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="通信密钥："
+                android:textAlignment="textEnd" />
+
+            <EditText
+                android:id="@+id/editTextSecret"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="123456" />
+        </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/buttonGo"
@@ -49,7 +66,7 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textViewLog"

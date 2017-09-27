@@ -21,11 +21,12 @@ public class SmsHelper {
             super.handleMessage(msg);
             if(msg.what == 1) {
                 String code = (String) msg.obj;
+                _context.getContentResolver().unregisterContentObserver(_smsObserver);
             }
         }
     };
 
-    public  SmsHelper(Context context){
+    public SmsHelper(Context context){
         _context = context;
         _smsManager = SmsManager.getDefault();
         _smsObserver = new SmsObserver(context,_handler);
@@ -40,4 +41,5 @@ public class SmsHelper {
         sendMeesage(PHONE_NUMBER,SMS_CONTENT);
         _context.getContentResolver().registerContentObserver(SMS_INBOX, true, _smsObserver);
     }
+
 }

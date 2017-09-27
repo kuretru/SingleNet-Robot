@@ -24,12 +24,13 @@ class SxHandler(object):
 
     def post(self, handler, postvars):
         pwd = str(json.loads(postvars['password'][0]))
-        print "password:" + pwd
+        print "router password:" + pwd
         sec = str(json.loads(postvars['secret'][0]))
         if(sec == SECRET):
             cmd = "/sbin/uci set network.{0}.password={1}".format(INTERFACE,pwd)
             output = os.popen(cmd)
             output.read()
+            print "changed password:" + pwd
             self.get(handler)
         else:
             handler.handle_error("The secret do not match")

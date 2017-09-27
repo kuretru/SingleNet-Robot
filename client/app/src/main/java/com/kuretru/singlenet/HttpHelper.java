@@ -85,9 +85,9 @@ public class HttpHelper {
 
     //发送GET请求并正则提取密码
     private void getPassword(String url){
-        String respone = doGet(url);
+        String response = doGet(url);
         Pattern pattern = Pattern.compile("[0-9]{6}");
-        Matcher matcher = pattern.matcher(respone);
+        Matcher matcher = pattern.matcher(response);
         if (matcher.find()) {
             String code = matcher.group(0);
             Message msg = _handler.obtainMessage(2, code);
@@ -99,14 +99,30 @@ public class HttpHelper {
     private void setPassword(String url, String password, String secret){
         StringBuffer buffer = new StringBuffer();
         buffer.append("password=").append(password).append("&")
-                .append("secret").append(secret).append("&");
-        String respone = doPost(url, buffer.toString());
+                .append("secret=").append(secret);
+        String response = doPost(url, buffer.toString());
+        Pattern pattern = Pattern.compile("[0-9]{6}");
+        Matcher matcher = pattern.matcher(response);
+        if (matcher.find()) {
+            String code = matcher.group(0);
+            Message msg = _handler.obtainMessage(3, code);
+            _handler.sendMessage(msg);
+        }
     }
 
     public void getRouterPassword(final String url){
         Thread t = new Thread(){
             public void run() {
                 getPassword(url);
+            }
+        };
+        t.start();
+    }
+
+    public void setRouterPassword(final String url, final String password, final String secret){
+        Thread t = new Thread(){
+            public void run() {
+                setPassword(url,password,secret);
             }
         };
         t.start();

@@ -30,7 +30,7 @@ public class SmsObserver extends ContentObserver {
         } else {
             Uri inboxUri = Uri.parse("content://sms/inbox");
             String[] projection = new String[] {"address", "date", "body", "type"};
-            String where = " address = '" + SmsHelper.PHONE_NUMBER + "' AND date > " +
+            String where = " address = '" + "106593005" + "' AND date > " +
                     (System.currentTimeMillis() - 5 * 60 * 1000);
             Cursor cursor = _context.getContentResolver().query(inboxUri, projection, where, null, "date desc");
             if (cursor != null) {
@@ -42,7 +42,6 @@ public class SmsObserver extends ContentObserver {
                         String code = matcher.group(0);
                         Message msg = _handler.obtainMessage(1, code);
                         _handler.sendMessage(msg);
-                        Toast.makeText(_context, code, Toast.LENGTH_SHORT).show();
                     }
                 }
                 cursor.close();

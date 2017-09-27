@@ -5,14 +5,14 @@
 # Description:      闪讯密码自动获取服务端(Python版)
 # Author:           kuretru < kuretru@gmail.com >
 # Github:           https://github.com/kuretru/SingleNet-Password
-# Version:          0.1.170926
+# Version:          0.2.170927
 #==================================================
 
 PORT = 8080
 INTERFACE = 'wan'
 SECRET = '123456'
 
-import os, BaseHTTPServer
+import os, BaseHTTPServer, urlparse, json
 
 class SxHandler(object):
     '''闪讯密码处理类'''
@@ -22,11 +22,15 @@ class SxHandler(object):
         output = os.popen(cmd)
         handler.send_content(output.read())
 
-    def post(self, handler, password, sec):
+    def post(self, handler, postvars):
+        pwd = str(json.loads(postvars['password'][0]))
+        print "password:" + pwd
+        sec = str(json.loads(postvars['secret'][0]))
         if(sec == SECRET):
-            cmd = "/sbin/uci set network.{0}.password {1}".format(INTERFACE,password)
+            cmd = "/sbin/uci set network.{0}.password={1}".format(INTERFACE,pwd)
             output = os.popen(cmd)
-            handler.send_content(output.read())
+            output.read()
+            self.get(handler)
         else:
             handler.handle_error("The secret do not match")
 
@@ -55,8 +59,10 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         self.init()
         try:
+            length = int(self.headers.getheader('Content-Length'))
+            postvars = urlparse.parse_qs(self.rfile.read(length),True)
             if(self.route == 'sx'):
-                self.sx.post(self)
+                self.sx.post(self,postvars)
         except Exception as msg:
             self.handle_error(msg)
 

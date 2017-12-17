@@ -2,13 +2,13 @@
 #-*- coding:utf-8 -*-
 #==================================================
 # Python Required:  Python 2.7
-# Description:      闪讯密码自动获取服务端(Python版)
+# Description:      闪讯密码自动获取器服务端(Python版)
 # Author:           kuretru < kuretru@gmail.com >
 # Github:           https://github.com/kuretru/SingleNet-Password
 # Version:          0.2.170927
 #==================================================
 
-PORT = 8080
+PORT = 8079
 INTERFACE = 'wan'
 SECRET = '123456'
 
@@ -19,12 +19,12 @@ class SxHandler(object):
 
     def get(self, handler):
         cmd = "/sbin/uci get network.{0}.password".format(INTERFACE)
-        output = os.popen(cmd)
-        handler.send_content(output.read())
+        output = os.popen(cmd).read()
+        print "router password:" + output
+        handler.send_content(output)
 
     def post(self, handler, postvars):
         pwd = str(json.loads(postvars['password'][0]))
-        print "router password:" + pwd
         sec = str(json.loads(postvars['secret'][0]))
         if(sec == SECRET):
             cmd = "/sbin/uci set network.{0}.password={1}".format(INTERFACE,pwd)
@@ -32,6 +32,9 @@ class SxHandler(object):
             output.read()
             print "changed password:" + pwd
             self.get(handler)
+            cmd = "/bin/sh /root/ifup.sh"
+            output = os.popen(cmd)
+            output.read()
         else:
             handler.handle_error("The secret do not match")
 

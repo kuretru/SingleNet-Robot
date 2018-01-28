@@ -1,10 +1,14 @@
 package com.kuretru.singlenet;
 
+import android.app.AlarmManager;
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,10 +16,13 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String PREFS_NAME = "config";
     private String _password;
     TextView _editTextServer;
     TextView _editTextSecret;
     Button _buttonGo;
+    Button _buttonSave;
+    //private AlarmManager alarmManager=(AlarmManager)getSystemService(Service.ALARM_SERVICE);
     private Handler _handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -26,12 +33,12 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what){
                 case 1:
                     _password = code;
-                    ToastShow("Step1 获取到闪讯密码：" + code);
+                    toastShow("Step1 获取到闪讯密码：" + code);
                     httpHelper = new HttpHelper(getApplicationContext(), _handler);
                     httpHelper.getRouterPassword(url);
                     break;
                 case 2:
-                    ToastShow("Step2 当前路由器密码：" + code);
+                    toastShow("Step2 当前路由器密码：" + code);
                     if(!_password.equals(code)){
                         httpHelper = new HttpHelper(getApplicationContext(), _handler);
                         String sec = _editTextSecret.getText().toString();
@@ -39,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case 3:
-                    ToastShow("Step3 成功设置路由器密码：" + code);
+                    toastShow("Step3 成功设置路由器密码：" + code);
                     break;
             }
         }
@@ -50,20 +57,45 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        loadConfig();
     }
 
     private void initView(){
-        _buttonGo = (Button) findViewById(R.id.buttonGo);
         _editTextServer = (TextView) findViewById(R.id.editTextServer);
         _editTextSecret = (TextView) findViewById(R.id.editTextSecret);
+        _buttonGo = (Button) findViewById(R.id.buttonGo);
+        _buttonSave = (Button) findViewById(R.id.buttonSave);
     }
 
-    private void ToastShow(String text){
+    private void loadConfig(){
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        String url = settings.getString("url", "http://dorm.i5zhen.com:8079/sx");
+        String pwd = settings.getString("secret","123456");
+        _editTextServer.setText(url);
+        _editTextSecret.setText(pwd);
+    }
+
+    private void toastShow(String text){
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     public void buttonGoOnClick(View view){
         SmsHelper smsHelper = new SmsHelper(this ,_handler);
         smsHelper.sendSxSms();
+    }
+
+    public void buttonSaveOnClick(View view){
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("url",_editTextServer.getText().toString());
+        editor.putString("secret",_editTextSecret.getText().toString());
+        editor.commit();
+        toastShow("配置保存成功");
+    }
+
+    public void buttonAlarmOnClick(View view){
+        Log.d("Singnet-DEBUG","注册定时任务");
+        Intent intent = new Intent(this,AlarmService.class);
+        startService(intent);
     }
 }

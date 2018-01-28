@@ -6,73 +6,100 @@
     android:layout_height="match_parent"
     tools:context="com.kuretru.singlenet.MainActivity">
 
-    <TableLayout
-        android:layout_width="339dp"
-        android:layout_height="494dp"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="8dp">
+    <TextView
+        android:id="@+id/textViewServer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:text="服务器地址："
+        android:textAlignment="textEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/editTextServer"
+        android:layout_width="230dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/textViewServer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="服务器地址："
-                android:textAlignment="textEnd" />
+    <TextView
+        android:id="@+id/textViewSecret"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_weight="1"
+        android:text="通信密钥："
+        android:textAlignment="textEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewServer" />
 
-            <EditText
-                android:id="@+id/editTextServer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="http://dorm.i5zhen.com:8080/sx" />
-        </TableRow>
+    <EditText
+        android:id="@+id/editTextSecret"
+        android:layout_width="230dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextServer" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:onClick="buttonSaveOnClick"
+        android:text="保存设定"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSecret" />
 
-            <TextView
-                android:id="@+id/textViewSecret"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="通信密钥："
-                android:textAlignment="textEnd" />
+    <Button
+        android:id="@+id/buttonGo"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:onClick="buttonGoOnClick"
+        android:text="手动发送密码"
+        app:layout_constraintBottom_toTopOf="@+id/textViewLog"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <EditText
-                android:id="@+id/editTextSecret"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="123456" />
-        </TableRow>
+    <Button
+        android:id="@+id/buttonAlarm"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_weight="1"
+        android:onClick="buttonAlarmOnClick"
+        android:text="注册定时任务"
+        app:layout_constraintBottom_toTopOf="@+id/textViewLog"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/buttonGo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="buttonGoOnClick"
-                android:text="注册定时任务" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textViewLog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-    </TableLayout>
+    <TextView
+        android:id="@+id/textViewLog"
+        android:layout_width="320dp"
+        android:layout_height="114dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -87,11 +87,13 @@ public class HttpHelper {
     private void getPassword(String url){
         String response = doGet(url);
         Pattern pattern = Pattern.compile("[0-9]{6}");
-        Matcher matcher = pattern.matcher(response);
-        if (matcher.find()) {
-            String code = matcher.group(0);
-            Message msg = _handler.obtainMessage(2, code);
-            _handler.sendMessage(msg);
+        if(response != null) {
+            Matcher matcher = pattern.matcher(response);
+            if (matcher.find()) {
+                String code = matcher.group(0);
+                Message msg = _handler.obtainMessage(2, code);
+                _handler.sendMessage(msg);
+            }
         }
     }
 

@@ -23,11 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".AlarmService"
-            android:label="SinglenetService" />
         <receiver android:name=".AlarmReceiver">
             <intent-filter>
-                <action android:name="com.kuretru.singlenet" />
+                <action android:name="com.kuretru.singlenet.alarmReceiver" />
             </intent-filter>
         </receiver>
         <receiver android:name=".BootReceiver">

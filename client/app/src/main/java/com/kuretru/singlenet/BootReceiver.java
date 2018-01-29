@@ -8,8 +8,6 @@ import android.util.Log;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("Singnet-DEBUG", "收到开机广播");
-        Intent i = new Intent(context, AlarmService.class);
-        context.startService(i);
+        LogHelper.LogD("收到开机广播");
     }
 }

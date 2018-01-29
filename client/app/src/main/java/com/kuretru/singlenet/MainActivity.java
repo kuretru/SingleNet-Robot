@@ -1,15 +1,11 @@
 package com.kuretru.singlenet;
 
-import android.app.AlarmManager;
-import android.app.Service;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,10 +17,11 @@ public class MainActivity extends AppCompatActivity {
     private String _password;
     TextView _editTextServer;
     TextView _editTextSecret;
+    TextView _textViewTime;
     TextView _textViewLog;
     Button _buttonGo;
     Button _buttonSave;
-    //private AlarmManager alarmManager=(AlarmManager)getSystemService(Service.ALARM_SERVICE);
+
     private Handler _handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -47,13 +44,13 @@ public class MainActivity extends AppCompatActivity {
                         httpHelper.setRouterPassword(url,_password,sec);
                     }else{
                         appendLog(String.format("%1$s 获取密码：%2$s，未更新\n",
-                                LogHelper.getTimeNow(), code));
+                                LogHelper.getTimeString(), code));
                     }
                     break;
                 case 3:
                     toastShow("Step3 成功设置路由器密码：" + code);
                     appendLog(String.format("%1$s 获取密码：%2$s，成功更新\n",
-                            LogHelper.getTimeNow(), code));
+                            LogHelper.getTimeString(), code));
                     break;
             }
         }
@@ -70,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView(){
         _editTextServer = (TextView) findViewById(R.id.editTextServer);
         _editTextSecret = (TextView) findViewById(R.id.editTextSecret);
+        _textViewTime = (TextView) findViewById(R.id.textViewTime);
         _textViewLog = (TextView) findViewById(R.id.textViewLog);
         _buttonGo = (Button) findViewById(R.id.buttonGo);
         _buttonSave = (Button) findViewById(R.id.buttonSave);
@@ -101,11 +99,14 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
         toastShow("配置保存成功");
     }
-    int aa=0;
+
     public void buttonAlarmOnClick(View view){
-        Log.d("Singnet-DEBUG","注册定时任务");
-        Intent intent = new Intent(this,AlarmService.class);
-        startService(intent);
+        AlarmHelper alarmHelper = new AlarmHelper(this);
+        LogHelper.LogD("注册定时任务成功");
+        toastShow("注册定时任务成功");
+        String time = alarmHelper.setNextAlarm();
+        _textViewTime.setText("下一次任务时间：\n" + time);
+
     }
 
     private void appendLog(String text){

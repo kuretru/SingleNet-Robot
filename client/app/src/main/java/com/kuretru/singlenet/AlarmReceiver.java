@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.util.Log;
 
 public class AlarmReceiver extends BroadcastReceiver {
+    public static final String RECEIVER_NAME = "com.kuretru.singlenet.alarmReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("Singnet-DEBUG", "收到广播");
-        Intent i = new Intent(context, AlarmService.class);
-        context.startService(i);
+        String action = intent.getAction();
+        if(action.equals(RECEIVER_NAME)){
+            LogHelper.LogD("收到闹钟广播");
+            AlarmHelper alarmHelper = new AlarmHelper(context);
+            alarmHelper.setNextAlarm();
+        }
     }
 }

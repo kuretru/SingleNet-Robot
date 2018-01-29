@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private String _password;
     TextView _editTextServer;
     TextView _editTextSecret;
+    TextView _textViewLog;
     Button _buttonGo;
     Button _buttonSave;
     //private AlarmManager alarmManager=(AlarmManager)getSystemService(Service.ALARM_SERVICE);
@@ -43,10 +45,15 @@ public class MainActivity extends AppCompatActivity {
                         httpHelper = new HttpHelper(getApplicationContext(), _handler);
                         String sec = _editTextSecret.getText().toString();
                         httpHelper.setRouterPassword(url,_password,sec);
+                    }else{
+                        appendLog(String.format("%1$s 获取密码：%2$s，未更新\n",
+                                LogHelper.getTimeNow(), code));
                     }
                     break;
                 case 3:
                     toastShow("Step3 成功设置路由器密码：" + code);
+                    appendLog(String.format("%1$s 获取密码：%2$s，成功更新\n",
+                            LogHelper.getTimeNow(), code));
                     break;
             }
         }
@@ -63,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
     private void initView(){
         _editTextServer = (TextView) findViewById(R.id.editTextServer);
         _editTextSecret = (TextView) findViewById(R.id.editTextSecret);
+        _textViewLog = (TextView) findViewById(R.id.textViewLog);
         _buttonGo = (Button) findViewById(R.id.buttonGo);
         _buttonSave = (Button) findViewById(R.id.buttonSave);
+        _textViewLog.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     private void loadConfig(){
@@ -92,10 +101,18 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
         toastShow("配置保存成功");
     }
-
+    int aa=0;
     public void buttonAlarmOnClick(View view){
         Log.d("Singnet-DEBUG","注册定时任务");
         Intent intent = new Intent(this,AlarmService.class);
         startService(intent);
+    }
+
+    private void appendLog(String text){
+        _textViewLog.append(text);
+        int offset = _textViewLog.getLineCount() * _textViewLog.getLineHeight();
+        if(offset > _textViewLog.getHeight()){
+            _textViewLog.scrollTo(0,offset - _textViewLog.getHeight());
+        }
     }
 }

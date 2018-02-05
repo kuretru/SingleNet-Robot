@@ -50,7 +50,7 @@ public class AlarmHelper {
     //获取下一次任务的时间
     private static long getDebugTime() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.SECOND, 10);
+        c.add(Calendar.MINUTE, 2);
         long time = c.getTime().getTime();
         return time;
     }

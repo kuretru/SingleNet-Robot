@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 public class SinglenetHandler {
 
+    public boolean finished;
     private Context _context;
     private String _url;
     private String _secret;
@@ -33,18 +34,21 @@ public class SinglenetHandler {
                     } else {
                         LogHelper.LogFile(_context, String.format("获取密码：%1$s，未更新\n", code));
                         loadLog();
+                        finished = true;
                     }
                     break;
                 case 3:
                     toastShow("Step3 成功设置路由器密码：" + code);
                     LogHelper.LogFile(_context, String.format("获取密码：%1$s，已更新\n", code));
                     loadLog();
+                    finished = true;
                     break;
             }
         }
     };
 
     public SinglenetHandler(Context context, String url, String secret, Handler parentHandler) {
+        finished = false;
         _context = context;
         _url = url;
         _secret = secret;

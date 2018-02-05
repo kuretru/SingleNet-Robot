@@ -1,6 +1,5 @@
 package com.kuretru.singlenet;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
@@ -14,11 +13,9 @@ import java.util.regex.Pattern;
 
 public class HttpHelper {
 
-    private Context _context;
     private Handler _handler;
 
-    public HttpHelper(Context context, Handler handler){
-        _context = context;
+    public HttpHelper(Handler handler) {
         _handler = handler;
     }
 
@@ -40,14 +37,14 @@ public class HttpHelper {
             isr.close();
             urlConnection.disconnect();
             return resultData.toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     //通用POST方法
-    private String doPost(String url, String content){
+    private String doPost(String url, String content) {
         try {
             URL address = new URL(url);
             HttpURLConnection urlConnection = (HttpURLConnection) address.openConnection();
@@ -56,7 +53,7 @@ public class HttpHelper {
             urlConnection.setRequestMethod("POST");
             urlConnection.setUseCaches(false);
             urlConnection.setInstanceFollowRedirects(true);
-            urlConnection.setRequestProperty("Content-type","application/x-www-form-urlencoded");
+            urlConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
             //urlConnection.setConnectTimeout(10 * 000);
             urlConnection.connect();
 
@@ -77,17 +74,17 @@ public class HttpHelper {
             isr.close();
             urlConnection.disconnect();
             return resultData.toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return  null;
+        return null;
     }
 
     //发送GET请求并正则提取密码
-    private void getPassword(String url){
+    private void getPassword(String url) {
         String response = doGet(url);
         Pattern pattern = Pattern.compile("[0-9]{6}");
-        if(response != null) {
+        if (response != null) {
             Matcher matcher = pattern.matcher(response);
             if (matcher.find()) {
                 String code = matcher.group(0);
@@ -98,7 +95,7 @@ public class HttpHelper {
     }
 
     //发送POST请求设置密码
-    private void setPassword(String url, String password, String secret){
+    private void setPassword(String url, String password, String secret) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("password=").append(password).append("&")
                 .append("secret=").append(secret);
@@ -112,8 +109,8 @@ public class HttpHelper {
         }
     }
 
-    public void getRouterPassword(final String url){
-        Thread t = new Thread(){
+    public void getRouterPassword(final String url) {
+        Thread t = new Thread() {
             public void run() {
                 getPassword(url);
             }
@@ -121,10 +118,10 @@ public class HttpHelper {
         t.start();
     }
 
-    public void setRouterPassword(final String url, final String password, final String secret){
-        Thread t = new Thread(){
+    public void setRouterPassword(final String url, final String password, final String secret) {
+        Thread t = new Thread() {
             public void run() {
-                setPassword(url,password,secret);
+                setPassword(url, password, secret);
             }
         };
         t.start();

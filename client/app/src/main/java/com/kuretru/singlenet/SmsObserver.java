@@ -6,13 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SmsObserver extends ContentObserver {
+
     private Context _context;
     private Handler _handler;
 
@@ -29,7 +28,7 @@ public class SmsObserver extends ContentObserver {
             return;
         } else {
             Uri inboxUri = Uri.parse("content://sms/inbox");
-            String[] projection = new String[] {"address", "date", "body", "type"};
+            String[] projection = new String[]{"address", "date", "body", "type"};
             String where = " address = '" + "106593005" + "' AND date > " +
                     (System.currentTimeMillis() - 5 * 60 * 1000);
             Cursor cursor = _context.getContentResolver().query(inboxUri, projection, where, null, "date desc");
@@ -49,4 +48,3 @@ public class SmsObserver extends ContentObserver {
         }
     }
 }
-

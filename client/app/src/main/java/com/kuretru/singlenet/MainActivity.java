@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        _singlenetHandler = new SinglenetHandler(this, _logHandler);
         initView();
         loadConfig();
     }
@@ -61,10 +62,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(LogHelper.PREFS_NAME, 0);
         String url = settings.getString("url", "http://dorm.i5zhen.com:8079/sx");
         String pwd = settings.getString("secret", "123456");
-        String log = settings.getString("log", "");
         _editTextServer.setText(url);
         _editTextSecret.setText(pwd);
-        _textViewLog.setText(log);
+        loadLog();
     }
 
     private void toastShow(String text) {
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buttonGoOnClick(View view) {
-        _singlenetHandler = new SinglenetHandler(getApplicationContext(),
-                _editTextServer.getText().toString(), _editTextSecret.getText().toString(),
-                _logHandler);
+        _singlenetHandler.setParameters(_editTextServer.getText().toString(),
+                _editTextSecret.getText().toString());
+        _singlenetHandler.finished = false;
         SmsHelper smsHelper = new SmsHelper(this, _singlenetHandler.handler);
         smsHelper.sendSxSms();
     }
@@ -108,10 +108,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(LogHelper.PREFS_NAME, 0);
         String log = settings.getString("log", "");
         _textViewLog.setText(log);
-        //_textViewLog.append(text);
-        //int offset = _textViewLog.getLineCount() * _textViewLog.getLineHeight();
-        //if (offset > _textViewLog.getHeight()) {
-        //    _textViewLog.scrollTo(0, offset - _textViewLog.getHeight());
-        //}
+        int offset = _textViewLog.getLineCount() * _textViewLog.getLineHeight();
+        if (offset > _textViewLog.getHeight()) {
+            //_textViewLog.scrollTo(0, offset - _textViewLog.getHeight());
+        }
     }
 }

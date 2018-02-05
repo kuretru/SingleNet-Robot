@@ -12,7 +12,7 @@ public class SinglenetHandler {
     private String _url;
     private String _secret;
     private String _password;
-    private Handler _parentHandler;
+    private static Handler _parentHandler = null;
     public Handler handler = new android.os.Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -32,14 +32,14 @@ public class SinglenetHandler {
                         httpHelper = new HttpHelper(handler);
                         httpHelper.setRouterPassword(_url, _password, _secret);
                     } else {
-                        LogHelper.LogFile(_context, String.format("获取密码：%1$s，未更新\n", code));
+                        LogHelper.LogFile(_context, String.format("获取密码：%1$s，未更新", code));
                         loadLog();
                         finished = true;
                     }
                     break;
                 case 3:
                     toastShow("Step3 成功设置路由器密码：" + code);
-                    LogHelper.LogFile(_context, String.format("获取密码：%1$s，已更新\n", code));
+                    LogHelper.LogFile(_context, String.format("获取密码：%1$s，已更新", code));
                     loadLog();
                     finished = true;
                     break;
@@ -47,12 +47,16 @@ public class SinglenetHandler {
         }
     };
 
-    public SinglenetHandler(Context context, String url, String secret, Handler parentHandler) {
-        finished = false;
+    public SinglenetHandler(Context context, Handler logHandler) {
         _context = context;
+        finished = false;
+        if (_parentHandler == null && logHandler != null)
+            _parentHandler = logHandler;
+    }
+
+    public void setParameters(String url, String secret) {
         _url = url;
         _secret = secret;
-        _parentHandler = parentHandler;
     }
 
     //在主窗体显示Toast

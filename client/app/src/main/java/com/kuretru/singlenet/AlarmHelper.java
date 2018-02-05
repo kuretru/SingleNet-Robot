@@ -21,6 +21,7 @@ public class AlarmHelper {
 
     //设置下一次任务
     public String setNextAlarm() {
+        //long nextTime = getNextTime();
         long nextTime = getDebugTime();
         Intent alarmIntent = new Intent(AlarmReceiver.RECEIVER_NAME);
         PendingIntent broadcast = PendingIntent.getBroadcast(_context, 0, alarmIntent, 0);
@@ -50,7 +51,7 @@ public class AlarmHelper {
     //获取下一次任务的时间
     private static long getDebugTime() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, 2);
+        c.add(Calendar.MINUTE, 1);
         long time = c.getTime().getTime();
         return time;
     }

@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -23,15 +21,16 @@ public class AlarmReceiver extends BroadcastReceiver {
             alarmHelper.setNextAlarm();
             SmsHelper smsHelper = new SmsHelper(context, _singlenetHandler.handler);
             smsHelper.sendSxSms();
-            DoAsync(30);
+            DoAsync(60);
         }
     }
 
     private void initHandler(Context context) {
         SharedPreferences settings = context.getSharedPreferences(LogHelper.PREFS_NAME, 0);
         String url = settings.getString("url", "http://dorm.i5zhen.com:8079/sx");
-        String pwd = settings.getString("secret", "123456");
-        _singlenetHandler = new SinglenetHandler(context, url, pwd, null);
+        String secret = settings.getString("secret", "123456");
+        _singlenetHandler = new SinglenetHandler(context, null);
+        _singlenetHandler.setParameters(url, secret);
     }
 
     //设置一个超时时间(秒)，并等待任务的完成

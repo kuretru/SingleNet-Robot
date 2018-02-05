@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import java.util.Calendar;
 
@@ -21,13 +22,17 @@ public class AlarmHelper {
 
     //设置下一次任务
     public String setNextAlarm() {
-        //long nextTime = getNextTime();
-        long nextTime = getDebugTime();
+        long nextTime = getNextTime();
+        //long nextTime = getDebugTime();
         Intent alarmIntent = new Intent(AlarmReceiver.RECEIVER_NAME);
         PendingIntent broadcast = PendingIntent.getBroadcast(_context, 0, alarmIntent, 0);
         _alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTime, broadcast);
         String strNextTime = LogHelper.getTimeString(nextTime);
         LogHelper.LogD("设置下一次任务时间：" + strNextTime);
+        SharedPreferences settings = _context.getSharedPreferences(LogHelper.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("nextTime", strNextTime);
+        editor.commit();
         return strNextTime;
     }
 

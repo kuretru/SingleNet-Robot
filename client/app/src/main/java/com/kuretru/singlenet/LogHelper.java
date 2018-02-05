@@ -33,7 +33,7 @@ public class LogHelper {
     //将日志记录到配置文件
     public static void LogFile(Context context, String message) {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
-        String old = settings.getString("log", "");
+        String old = settings.getString("log", "").trim() + "\n";
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("log", old + String.format("%1$s %2$s\n", getTimeString(), message));
         editor.commit();

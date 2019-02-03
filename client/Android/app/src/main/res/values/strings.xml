@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">闪讯机器人</string>
+    <string name="exception_exit">出现错误，请重新打开App</string>
+    <string name="config_url">服务器地址：</string>
+    <string name="config_secret">　通讯密钥：</string>
+    <string name="config_url_hint">路由器接口地址</string>
+    <string name="config_secret_hint">路由器设置的接口密码</string>
+    <string name="config_url_key">config_url</string>
+    <string name="config_secret_key">config_secret</string>
+    <string name="config_clear">清空</string>
+    <string name="config_save">保存</string>
+    <string name="config_exit">完成</string>
 </resources>

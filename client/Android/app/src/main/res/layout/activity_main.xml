@@ -28,4 +28,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btnSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btnSend_onClick"
+        android:text="@string/main_send" />
+
 </android.support.constraint.ConstraintLayout>

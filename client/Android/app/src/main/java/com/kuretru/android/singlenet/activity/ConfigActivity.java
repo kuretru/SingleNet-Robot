@@ -23,7 +23,7 @@ public class ConfigActivity extends AppCompatActivity {
     private TextView etSecret;
     private SharedPreferences sharedPreferences = null;
     private static final String[] permissionsList = new String[]{
-            Manifest.permission.SEND_SMS
+            Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS
     };
 
     @Override

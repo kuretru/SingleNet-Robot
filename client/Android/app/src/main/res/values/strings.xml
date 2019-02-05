@@ -10,4 +10,5 @@
     <string name="config_clear">清空</string>
     <string name="config_save">保存</string>
     <string name="config_exit">完成</string>
+    <string name="main_send">手动发送短信</string>
 </resources>

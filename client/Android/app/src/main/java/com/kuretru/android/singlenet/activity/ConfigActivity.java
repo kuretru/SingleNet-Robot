@@ -1,6 +1,10 @@
 package com.kuretru.android.singlenet.activity;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,11 +14,17 @@ import com.kuretru.android.singlenet.R;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConfigActivity extends AppCompatActivity {
 
     private TextView etUrl;
     private TextView etSecret;
     private SharedPreferences sharedPreferences = null;
+    private static final String[] permissionsList = new String[]{
+            Manifest.permission.SEND_SMS
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +69,20 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     public void btnExit_onClick(View view) {
+        checkPermission();
         this.finish();
+    }
+
+    private void checkPermission() {
+        List<String> permissions = new ArrayList<>();
+        for (String permission : permissionsList) {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(permission);
+            }
+        }
+        if (permissions.size() > 0) {
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), 1);
+        }
     }
 
     private void initView() {

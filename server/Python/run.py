@@ -41,14 +41,36 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_content(now)
         elif route == 'wan_option':
             if method == 'GET':
-                data = OrderedDict([('username', get_username()), ('password', get_password())])
-                self.send_content(data)
+                self.get_wan_option()
             elif method == 'POST':
-                self.send_content('set_wan')
+                self.set_wan_option()
             else:
                 self.send_error(405)
         else:
             self.send_error(404)
+
+    def get_wan_option(self):
+        data = OrderedDict([('username', get_username()), ('password', get_password())])
+        self.send_content(data)
+
+    def set_wan_option(self):
+        data = self.get_payload()
+        username = data['username']
+        password = data['password']
+        if username == '' and password == '':
+            self.send_error(400)
+            return
+        if username:
+            set_username(username)
+        if password:
+            set_password(password)
+        self.get_wan_option()
+
+    def get_payload(self):
+        payload_len = int(self.headers.getheader('Content-Length', 0))
+        payload = self.rfile.read(payload_len)
+        payload = json.loads(payload)
+        return payload
 
     def send_content(self, data):
         self.send_response(200)

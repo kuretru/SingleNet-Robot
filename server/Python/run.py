@@ -39,6 +39,14 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if route == '':
             now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             self.send_content(now)
+        elif route == 'wan_option':
+            if method == 'GET':
+                data = OrderedDict([('username', get_username()), ('password', get_password())])
+                self.send_content(data)
+            elif method == 'POST':
+                self.send_content('set_wan')
+            else:
+                self.send_error(405)
         else:
             self.send_error(404)
 
@@ -51,7 +59,7 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     @staticmethod
     def api_response(data):
         response = OrderedDict([('code', 2000), ('message', 'success'), ('data', data)])
-        return json.dumps(response)
+        return json.dumps(response).replace('\\n', '')
 
     def do_GET(self):
         self.handle_method('GET')

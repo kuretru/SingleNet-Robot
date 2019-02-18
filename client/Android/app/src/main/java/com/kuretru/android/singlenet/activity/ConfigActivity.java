@@ -3,10 +3,10 @@ package com.kuretru.android.singlenet.activity;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,12 +19,12 @@ import java.util.List;
 
 public class ConfigActivity extends AppCompatActivity {
 
-    private TextView etUrl;
-    private TextView etSecret;
-    private SharedPreferences sharedPreferences = null;
     private static final String[] permissionsList = new String[]{
             Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS
     };
+    private TextView etUrl;
+    private TextView etSecret;
+    private SharedPreferences sharedPreferences = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,9 @@ public class ConfigActivity extends AppCompatActivity {
             ToastUtils.show(getApplicationContext(), "接口密码不能为空！");
             etSecret.requestFocus();
             return;
+        }
+        if (!url.endsWith("/")) {
+            url = url + "/";
         }
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("config_url", url);

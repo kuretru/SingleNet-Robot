@@ -10,20 +10,20 @@ public class ApiResponse {
 
     private String message;
 
-    private Object data;
+    private WanOption data;
 
     public ApiResponse() {
         super();
     }
 
-    public ApiResponse(Integer code, String message, Object data) {
+    private ApiResponse(Integer code, String message, WanOption data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public static ApiResponse failure(String data) {
-        return new ApiResponse(FAILURE, "failure", data);
+    public static ApiResponse failure(String message) {
+        return new ApiResponse(FAILURE, message, null);
     }
 
     public Integer getCode() {
@@ -42,11 +42,11 @@ public class ApiResponse {
         this.message = message;
     }
 
-    public Object getData() {
+    public WanOption getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(WanOption data) {
         this.data = data;
     }
 

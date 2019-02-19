@@ -1,12 +1,14 @@
 package com.kuretru.android.singlenet.api;
 
-import android.os.Handler;
-import android.os.Message;
+import android.content.Context;
 
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
+import com.kuretru.android.singlenet.util.ToastUtils;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,53 +21,62 @@ public class ApiManager {
     public static final int GET_WAN_OPTION = 2;
     public static final int SET_WAN_OPTION = 3;
 
-    private Handler handler;
-    private ServerConfig serverConfig;
     private Retrofit retrofit;
     private SinglenetService singlenetService;
 
-    public ApiManager(Handler handler, ServerConfig serverConfig) {
-        this.handler = handler;
-        this.serverConfig = serverConfig;
+    public ApiManager(ServerConfig serverConfig) {
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
+        okHttpClient.addInterceptor(chain -> {
+            Request original = chain.request();
+            Request request = original.newBuilder()
+                    .header("Api-Token", serverConfig.getSecret())
+                    .header("Accept", "application/json")
+                    .method(original.method(), original.body())
+                    .build();
+            return chain.proceed(request);
+        });
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(serverConfig.getUrl())
                 .addConverterFactory(JacksonConverterFactory.create())
+                .client(okHttpClient.build())
                 .build();
         singlenetService = retrofit.create(SinglenetService.class);
     }
 
-    public void ping() {
-        Call<ApiResponse> call = singlenetService.ping();
-        execute(call, PING);
+    public Call<ApiResponse<String>> ping() {
+        Call<ApiResponse<String>> call = singlenetService.ping();
+        return call;
     }
 
-    public void getWanOption() {
-        Call<ApiResponse> call = singlenetService.getWanOption();
-        execute(call, GET_WAN_OPTION);
-    }
-
-    public void setWanOption(WanOption wanOption) {
-
-    }
-
-    public void connect() {
-
-    }
-
-    private void execute(Call<ApiResponse> call, int what) {
-        call.enqueue(new Callback<ApiResponse>() {
+    public void ping(Context context) {
+        Call<ApiResponse<String>> call = this.ping();
+        call.enqueue(new Callback<ApiResponse<String>>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                Message.obtain(handler, what, response.body()).sendToTarget();
+            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                ApiResponse<String> apiResponse = response.body();
+                if (ApiResponse.SUCCESS.equals(apiResponse.getCode())) {
+                    ToastUtils.show(context, "与服务器通讯成功！");
+                } else {
+                    ToastUtils.show(context, apiResponse.getData());
+                }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                String message = "与服务器通信失败，请检查服务器配置或网络连接！";
-                ApiResponse response = ApiResponse.failure(message);
-                Message.obtain(handler, what, response).sendToTarget();
+            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                ToastUtils.show(context, "连接失败：" + t.getMessage());
             }
         });
+    }
+
+    public Call<ApiResponse<WanOption>> getWanOption() {
+        Call<ApiResponse<WanOption>> call = singlenetService.getWanOption();
+        return call;
+    }
+
+    public Call<ApiResponse<WanOption>> setWanOption(WanOption wanOption) {
+        Call<ApiResponse<WanOption>> call = singlenetService.setWanOption(wanOption);
+        return call;
     }
 
 }

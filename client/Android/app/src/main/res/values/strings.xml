@@ -8,8 +8,8 @@
     <string name="config_url_key">config_url</string>
     <string name="config_secret_key">config_secret</string>
     <string name="config_clear">清空</string>
-    <string name="config_save">保存</string>
-    <string name="config_exit">完成</string>
+    <string name="config_test">测试服务器</string>
+    <string name="config_save">保存并退出</string>
     <string name="main_send">立即更新账号</string>
     <string name="main_config">服务器配置</string>
     <string name="main_panel_config">配置面板</string>

@@ -12,17 +12,12 @@ import android.widget.TextView;
 
 import com.kuretru.android.singlenet.R;
 import com.kuretru.android.singlenet.api.ApiManager;
-import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ConfigActivity extends AppCompatActivity {
 
@@ -63,23 +58,7 @@ public class ConfigActivity extends AppCompatActivity {
         }
         ServerConfig serverConfig = new ServerConfig(url, secret);
         ApiManager apiManager = new ApiManager(serverConfig);
-        Call<ApiResponse<String>> call = apiManager.ping();
-        call.enqueue(new Callback<ApiResponse<String>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                ApiResponse<String> apiResponse = response.body();
-                if (ApiResponse.SUCCESS.equals(apiResponse.getCode())) {
-                    ToastUtils.show(getApplicationContext(), "与服务器通讯成功！");
-                } else {
-                    ToastUtils.show(getApplicationContext(), apiResponse.getData());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                ToastUtils.show(getApplicationContext(), "连接失败：" + t.getMessage());
-            }
-        });
+        apiManager.ping(this.getApplicationContext());
     }
 
     public void btnSave_onClick(View view) {

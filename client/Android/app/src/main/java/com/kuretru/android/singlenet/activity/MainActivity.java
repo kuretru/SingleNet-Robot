@@ -1,10 +1,9 @@
 package com.kuretru.android.singlenet.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +18,10 @@ import com.kuretru.android.singlenet.service.SmsService;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button btnSend;
@@ -26,18 +29,18 @@ public class MainActivity extends AppCompatActivity {
     private EditText etUsername;
     private EditText etPassword;
 
+    private Context context;
     private SharedPreferences sharedPreferences = null;
     private ServerConfig serverConfig = null;
     private ApiManager apiManager = null;
-    private Handler singlenetHandler = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this.getApplicationContext();
         sharedPreferences = this.getSharedPreferences("config", MODE_PRIVATE);
         initView();
-        initHandler();
     }
 
     @Override
@@ -45,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         loadServerConfig();
         if (serverConfig != null) {
-            apiManager = new ApiManager(singlenetHandler, serverConfig);
-            apiManager.ping();
+            apiManager = new ApiManager(serverConfig);
+            apiManager.ping(this.getApplicationContext());
         }
     }
 
@@ -58,16 +61,29 @@ public class MainActivity extends AppCompatActivity {
     public void btnSend_onClick(View view) {
         Intent intent = new Intent(this, SmsService.class);
         this.startService(intent);
+        //Test1<WanOption> test1 = mapper.readValue(json, new TypeReference<Test1<WanOption>>(){})
     }
 
     public void btnUpdate_onClick(View view) {
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
         if (StringUtils.isNullOrEmpty(password)) {
-            ToastUtils.show(getApplicationContext(), "密码是必填项！");
+            ToastUtils.show(context, "密码是必填项！");
             return;
         }
         WanOption wanOption = new WanOption(username, password);
+        Call<ApiResponse<WanOption>> call = apiManager.setWanOption(wanOption);
+        call.enqueue(new Callback<ApiResponse<WanOption>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<WanOption>> call, Response<ApiResponse<WanOption>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<WanOption>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void initView() {
@@ -77,25 +93,6 @@ public class MainActivity extends AppCompatActivity {
         this.etPassword = findViewById(R.id.etPassword);
     }
 
-    private void initHandler() {
-        singlenetHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case ApiManager.PING:
-                        ApiResponse apiResponse = (ApiResponse) msg.obj;
-                        if (!ApiResponse.SUCCESS.equals(apiResponse.getCode())) {
-                            ToastUtils.show(getApplicationContext(), "与服务器通信失败，请检查服务器配置或网络连接！");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-    }
-
     private void loadServerConfig() {
         String url = sharedPreferences.getString("config_url", "");
         String secret = sharedPreferences.getString("config_secret", "");
@@ -103,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             btnSend.setEnabled(false);
             btnUpdate.setEnabled(false);
             serverConfig = null;
-            ToastUtils.show(getApplicationContext(), "未检测到服务器配置，请配置服务器！");
+            ToastUtils.show(context, "未检测到服务器配置，请配置服务器！");
         } else {
             btnSend.setEnabled(true);
             btnUpdate.setEnabled(true);

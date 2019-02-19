@@ -11,12 +11,12 @@ import retrofit2.http.PUT;
 public interface SinglenetService {
 
     @GET(".")
-    Call<ApiResponse> ping();
+    Call<ApiResponse<String>> ping();
 
     @GET("wan_option")
-    Call<ApiResponse> getWanOption();
+    Call<ApiResponse<WanOption>> getWanOption();
 
     @PUT("wan_option")
-    Call<ApiResponse> setWanOption(@Body WanOption wanOption);
+    Call<ApiResponse<WanOption>> setWanOption(@Body WanOption wanOption);
 
 }

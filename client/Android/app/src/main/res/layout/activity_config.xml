@@ -77,6 +77,15 @@
                 android:text="@string/config_clear" />
 
             <Button
+                android:id="@+id/btnTest"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="btnTest_onClick"
+                android:text="@string/config_test" />
+
+            <Button
                 android:id="@+id/btnSave"
                 style="?attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -85,14 +94,6 @@
                 android:onClick="btnSave_onClick"
                 android:text="@string/config_save" />
 
-            <Button
-                android:id="@+id/btnExit"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="btnExit_onClick"
-                android:text="@string/config_exit" />
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

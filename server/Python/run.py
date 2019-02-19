@@ -35,23 +35,33 @@ def set_password(password):
 class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def handle_method(self, method):
+        if not self.headers.has_key('Api-Token'):
+            self.send_error(401)
+            return
+        token = self.headers['Api-Token']
+        if token != SECRET:
+            self.send_content(self.failure('通讯密钥不符！'))
+            return
         route = self.path.strip('/')
         if route == '':
-            now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            self.send_content(now)
+            self.get_index()
         elif route == 'wan_option':
             if method == 'GET':
                 self.get_wan_option()
-            elif method == 'POST':
+            elif method == 'PUT':
                 self.set_wan_option()
             else:
                 self.send_error(405)
         else:
             self.send_error(404)
 
+    def get_index(self):
+        now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.send_content(self.success(now))
+
     def get_wan_option(self):
         data = OrderedDict([('username', get_username()), ('password', get_password())])
-        self.send_content(data)
+        self.send_content(self.success(data))
 
     def set_wan_option(self):
         data = self.get_payload()
@@ -72,15 +82,20 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         payload = json.loads(payload)
         return payload
 
-    def send_content(self, data):
+    def send_content(self, response):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json;charset=UTF-8')
         self.end_headers()
-        self.wfile.write(self.api_response(data))
+        self.wfile.write(response)
 
     @staticmethod
-    def api_response(data):
+    def success(data):
         response = OrderedDict([('code', 2000), ('message', 'success'), ('data', data)])
+        return json.dumps(response).replace('\\n', '')
+
+    @staticmethod
+    def failure(data):
+        response = OrderedDict([('code', 4000), ('message', 'failure'), ('data', data)])
         return json.dumps(response).replace('\\n', '')
 
     def do_GET(self):

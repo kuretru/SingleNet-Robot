@@ -35,7 +35,7 @@ def set_password(password):
 class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def handle_method(self, method):
-        if not self.headers.has_key('Api-Token'):
+        if 'Api-Token' not in self.headers:
             self.send_error(401)
             return
         token = self.headers['Api-Token']
@@ -83,18 +83,17 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return payload
 
     def send_content(self, response):
-        self.send_response(200)
         self.send_header('Content-Type', 'application/json;charset=UTF-8')
         self.end_headers()
         self.wfile.write(response)
 
-    @staticmethod
-    def success(data):
+    def success(self, data):
+        self.send_response(200)
         response = OrderedDict([('code', 2000), ('message', 'success'), ('data', data)])
         return json.dumps(response).replace('\\n', '')
 
-    @staticmethod
-    def failure(data):
+    def failure(self, data):
+        self.send_response(401)
         response = OrderedDict([('code', 4000), ('message', 'failure'), ('data', data)])
         return json.dumps(response).replace('\\n', '')
 

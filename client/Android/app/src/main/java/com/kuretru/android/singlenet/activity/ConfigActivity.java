@@ -48,15 +48,10 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     public void btnTest_onClick(View view) {
-        String url = etUrl.getText().toString();
-        String secret = etSecret.getText().toString();
-        if (!checkContent(url, secret)) {
+        ServerConfig serverConfig = loadServerConfig();
+        if (!checkServerConfig(serverConfig)) {
             return;
         }
-        if (!url.endsWith("/")) {
-            url = url + "/";
-        }
-        ServerConfig serverConfig = new ServerConfig(url, secret);
         ApiManager apiManager = new ApiManager(serverConfig);
         apiManager.ping(this.getApplicationContext());
     }
@@ -65,17 +60,13 @@ public class ConfigActivity extends AppCompatActivity {
         if (sharedPreferences == null) {
             ToastUtils.show(getApplicationContext(), getString(R.string.exception_exit));
         }
-        String url = etUrl.getText().toString();
-        String secret = etSecret.getText().toString();
-        if (!checkContent(url, secret)) {
+        ServerConfig serverConfig = loadServerConfig();
+        if (!checkServerConfig(serverConfig)) {
             return;
         }
-        if (!url.endsWith("/")) {
-            url = url + "/";
-        }
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("config_url", url);
-        editor.putString("config_secret", secret);
+        editor.putString("config_url", serverConfig.getUrl());
+        editor.putString("config_secret", serverConfig.getSecret());
         editor.apply();
         ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
 
@@ -83,13 +74,24 @@ public class ConfigActivity extends AppCompatActivity {
         this.finish();
     }
 
-    private boolean checkContent(String url, String secret) {
-        if (StringUtils.isNullOrEmpty(url)) {
+    private ServerConfig loadServerConfig() {
+        String url = etUrl.getText().toString().trim();
+        String secret = etSecret.getText().toString().trim();
+        if (!StringUtils.isNullOrEmpty(url)) {
+            if (!url.endsWith("/")) {
+                url = url + "/";
+            }
+        }
+        return new ServerConfig(url, secret);
+    }
+
+    private boolean checkServerConfig(ServerConfig serverConfig) {
+        if (StringUtils.isNullOrEmpty(serverConfig.getUrl())) {
             ToastUtils.show(getApplicationContext(), "路由器接口地址不能为空！");
             etUrl.requestFocus();
             return false;
         }
-        if (StringUtils.isNullOrEmpty(secret)) {
+        if (StringUtils.isNullOrEmpty(serverConfig.getSecret())) {
             ToastUtils.show(getApplicationContext(), "接口密码不能为空！");
             etSecret.requestFocus();
             return false;

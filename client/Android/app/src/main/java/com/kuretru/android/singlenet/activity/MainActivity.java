@@ -26,6 +26,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnSend;
+    private Button btnAlarm;
     private Button btnUpdate;
     private EditText etUsername;
     private EditText etPassword;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public void btnSend_onClick(View view) {
         Intent intent = new Intent(this, SmsService.class);
         this.startService(intent);
+        ToastUtils.show(context, "获取密码短信发送成功！");
     }
 
     public void btnAlarm_onClick(View view) {
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         this.btnSend = findViewById(R.id.btnSend);
+        this.btnAlarm = findViewById(R.id.btnAlarm);
         this.btnUpdate = findViewById(R.id.btnUpdate);
         this.etUsername = findViewById(R.id.etUsername);
         this.etPassword = findViewById(R.id.etPassword);
@@ -109,11 +112,13 @@ public class MainActivity extends AppCompatActivity {
         String secret = sharedPreferences.getString("config_secret", "");
         if (StringUtils.isNullOrEmpty(url) || StringUtils.isNullOrEmpty(secret)) {
             btnSend.setEnabled(false);
+            btnAlarm.setEnabled(false);
             btnUpdate.setEnabled(false);
             serverConfig = null;
             ToastUtils.show(context, "未检测到服务器配置，请配置服务器！");
         } else {
             btnSend.setEnabled(true);
+            btnAlarm.setEnabled(true);
             btnUpdate.setEnabled(true);
             serverConfig = new ServerConfig(url, secret);
         }

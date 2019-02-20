@@ -13,8 +13,8 @@ import com.kuretru.android.singlenet.api.ApiManager;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
+import com.kuretru.android.singlenet.service.AlarmService;
 import com.kuretru.android.singlenet.service.SmsService;
-import com.kuretru.android.singlenet.util.AlarmUtils;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
@@ -66,14 +66,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAlarm_onClick(View view) {
-        AlarmUtils alarmUtils = new AlarmUtils(this.getApplicationContext());
-        alarmUtils.register();
+        AlarmService alarmService = new AlarmService(this.getApplicationContext());
+        alarmService.register();
         ToastUtils.show(context, "注册定时任务成功！");
     }
 
     public void btnCancel_onClick(View view) {
-        AlarmUtils alarmUtils = new AlarmUtils(this.getApplicationContext());
-        alarmUtils.cancel();
+        AlarmService alarmService = new AlarmService(this.getApplicationContext());
+        alarmService.cancel();
         ToastUtils.show(context, "取消定时任务成功！");
     }
 

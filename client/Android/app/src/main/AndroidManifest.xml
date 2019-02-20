@@ -16,7 +16,6 @@
         android:theme="@style/AppTheme">
         <service android:name=".service.SmsService" />
         <service android:name=".service.SinglenetService" />
-        <service android:name=".service.AlarmService" />
 
         <activity android:name=".activity.ConfigActivity" />
         <activity android:name=".activity.MainActivity">

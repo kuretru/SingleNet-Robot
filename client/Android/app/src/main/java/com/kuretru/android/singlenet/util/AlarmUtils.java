@@ -26,9 +26,18 @@ public class AlarmUtils {
 
     public void register() {
         long nextTime = getDebugTime();
-        Intent intent = new Intent(context, AlarmService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(context, SINGLENET_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = getPendingIntent();
         alarmManager.setExact(RTC_WAKEUP, System.currentTimeMillis() + 3000, pendingIntent);
+    }
+
+    public void cancel() {
+        PendingIntent pendingIntent = getPendingIntent();
+        alarmManager.cancel(pendingIntent);
+    }
+
+    private PendingIntent getPendingIntent() {
+        Intent intent = new Intent(context, AlarmService.class);
+        return PendingIntent.getService(context, SINGLENET_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private long getDebugTime() {

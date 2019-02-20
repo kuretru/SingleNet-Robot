@@ -2,7 +2,6 @@ package com.kuretru.android.singlenet.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +15,7 @@ import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
 import com.kuretru.android.singlenet.service.SmsService;
 import com.kuretru.android.singlenet.util.AlarmUtils;
+import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
@@ -27,12 +27,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnSend;
     private Button btnAlarm;
+    private Button btnCancel;
     private Button btnUpdate;
     private EditText etUsername;
     private EditText etPassword;
 
     private Context context;
-    private SharedPreferences sharedPreferences = null;
     private ServerConfig serverConfig = null;
     private ApiManager apiManager = null;
 
@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
-        sharedPreferences = this.getSharedPreferences("config", MODE_PRIVATE);
         initView();
     }
 
@@ -69,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
     public void btnAlarm_onClick(View view) {
         AlarmUtils alarmUtils = new AlarmUtils(this.getApplicationContext());
         alarmUtils.register();
+        ToastUtils.show(context, "注册定时任务成功！");
+    }
+
+    public void btnCancel_onClick(View view) {
+        AlarmUtils alarmUtils = new AlarmUtils(this.getApplicationContext());
+        alarmUtils.cancel();
+        ToastUtils.show(context, "取消定时任务成功！");
     }
 
     public void btnUpdate_onClick(View view) {
@@ -102,25 +108,27 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         this.btnSend = findViewById(R.id.btnSend);
         this.btnAlarm = findViewById(R.id.btnAlarm);
+        this.btnCancel = findViewById(R.id.btnCancel);
         this.btnUpdate = findViewById(R.id.btnUpdate);
         this.etUsername = findViewById(R.id.etUsername);
         this.etPassword = findViewById(R.id.etPassword);
     }
 
     private void loadServerConfig() {
-        String url = sharedPreferences.getString("config_url", "");
-        String secret = sharedPreferences.getString("config_secret", "");
-        if (StringUtils.isNullOrEmpty(url) || StringUtils.isNullOrEmpty(secret)) {
+        ServerConfig serverConfig = ConfigUtils.loadServerConfig(this.getApplicationContext());
+        if (StringUtils.isNullOrEmpty(serverConfig.getUrl()) || StringUtils.isNullOrEmpty(serverConfig.getSecret())) {
             btnSend.setEnabled(false);
             btnAlarm.setEnabled(false);
+            btnCancel.setEnabled(false);
             btnUpdate.setEnabled(false);
-            serverConfig = null;
+            this.serverConfig = null;
             ToastUtils.show(context, "未检测到服务器配置，请配置服务器！");
         } else {
             btnSend.setEnabled(true);
             btnAlarm.setEnabled(true);
+            btnCancel.setEnabled(true);
             btnUpdate.setEnabled(true);
-            serverConfig = new ServerConfig(url, secret);
+            this.serverConfig = serverConfig;
         }
     }
 

@@ -8,7 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
 
-public interface SinglenetService {
+public interface SinglenetApi {
 
     @GET(".")
     Call<ApiResponse<String>> ping();

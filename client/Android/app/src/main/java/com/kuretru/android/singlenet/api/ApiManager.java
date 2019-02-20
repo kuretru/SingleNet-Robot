@@ -5,6 +5,7 @@ import android.content.Context;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
+import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
 import okhttp3.OkHttpClient;
@@ -22,7 +23,7 @@ public class ApiManager {
     public static final int SET_WAN_OPTION = 3;
 
     private Retrofit retrofit;
-    private SinglenetService singlenetService;
+    private SinglenetApi singlenetApi;
 
     public ApiManager(ServerConfig serverConfig) {
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
@@ -41,11 +42,11 @@ public class ApiManager {
                 .addConverterFactory(JacksonConverterFactory.create())
                 .client(okHttpClient.build())
                 .build();
-        singlenetService = retrofit.create(SinglenetService.class);
+        singlenetApi = retrofit.create(SinglenetApi.class);
     }
 
     public Call<ApiResponse<String>> ping() {
-        Call<ApiResponse<String>> call = singlenetService.ping();
+        Call<ApiResponse<String>> call = singlenetApi.ping();
         return call;
     }
 
@@ -54,12 +55,12 @@ public class ApiManager {
         call.enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
-                ApiResponse<String> apiResponse = response.body();
-                if (ApiResponse.SUCCESS.equals(apiResponse.getCode())) {
+                if (response.isSuccessful()) {
                     ToastUtils.show(context, "与服务器通讯成功！");
-                } else {
-                    ToastUtils.show(context, apiResponse.getData());
+                    return;
                 }
+                ApiResponse<String> errorResponse = StringUtils.getErrorResponse(response.errorBody());
+                ToastUtils.show(context, errorResponse.getData());
             }
 
             @Override
@@ -70,12 +71,12 @@ public class ApiManager {
     }
 
     public Call<ApiResponse<WanOption>> getWanOption() {
-        Call<ApiResponse<WanOption>> call = singlenetService.getWanOption();
+        Call<ApiResponse<WanOption>> call = singlenetApi.getWanOption();
         return call;
     }
 
     public Call<ApiResponse<WanOption>> setWanOption(WanOption wanOption) {
-        Call<ApiResponse<WanOption>> call = singlenetService.setWanOption(wanOption);
+        Call<ApiResponse<WanOption>> call = singlenetApi.setWanOption(wanOption);
         return call;
     }
 

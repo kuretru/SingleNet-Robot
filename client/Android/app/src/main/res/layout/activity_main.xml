@@ -64,6 +64,13 @@
                 android:layout_height="wrap_content"
                 android:onClick="btnSend_onClick"
                 android:text="@string/main_send" />
+
+            <Button
+                android:id="@+id/btnAlarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="btnAlarm_onClick"
+                android:text="@string/main_alarm" />
         </LinearLayout>
 
         <LinearLayout
@@ -99,6 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:hint="@string/singlenet_username_hint"
                     android:inputType="textEmailAddress" />
             </LinearLayout>
 

@@ -15,6 +15,7 @@ import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
 import com.kuretru.android.singlenet.service.SmsService;
+import com.kuretru.android.singlenet.util.AlarmUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         loadServerConfig();
         if (serverConfig != null) {
             apiManager = new ApiManager(serverConfig);
-            apiManager.ping(this.getApplicationContext());
+            //apiManager.ping(this.getApplicationContext());
         }
     }
 
@@ -61,12 +62,16 @@ public class MainActivity extends AppCompatActivity {
     public void btnSend_onClick(View view) {
         Intent intent = new Intent(this, SmsService.class);
         this.startService(intent);
-        //Test1<WanOption> test1 = mapper.readValue(json, new TypeReference<Test1<WanOption>>(){})
+    }
+
+    public void btnAlarm_onClick(View view) {
+        AlarmUtils alarmUtils = new AlarmUtils(this.getApplicationContext());
+        alarmUtils.register();
     }
 
     public void btnUpdate_onClick(View view) {
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
         if (StringUtils.isNullOrEmpty(password)) {
             ToastUtils.show(context, "密码是必填项！");
             return;
@@ -76,12 +81,18 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<ApiResponse<WanOption>>() {
             @Override
             public void onResponse(Call<ApiResponse<WanOption>> call, Response<ApiResponse<WanOption>> response) {
-
+                if (response.isSuccessful()) {
+                    String message = StringUtils.isNullOrEmpty(username) ? "" : "用户名及";
+                    ToastUtils.show(context, "更新" + message + "密码成功！");
+                    return;
+                }
+                ApiResponse<String> errorResponse = StringUtils.getErrorResponse(response.errorBody());
+                ToastUtils.show(context, errorResponse.getData());
             }
 
             @Override
             public void onFailure(Call<ApiResponse<WanOption>> call, Throwable t) {
-
+                ToastUtils.show(context, "连接失败：" + t.getMessage());
             }
         });
     }

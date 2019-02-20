@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 import com.kuretru.android.singlenet.service.SinglenetService;
+import com.kuretru.android.singlenet.util.ToastUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ public class SmsReceiver extends BroadcastReceiver {
                         Intent singlenetIntent = new Intent(context, SinglenetService.class);
                         singlenetIntent.putExtra("code", code);
                         context.startService(singlenetIntent);
+                        ToastUtils.show(context, "获取到闪讯密码：" + code);
                         break;
                     }
                 }

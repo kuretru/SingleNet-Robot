@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".service.SmsService" />
         <service android:name=".service.SinglenetService" />
+        <service android:name=".service.AlarmService" />
 
         <activity android:name=".activity.ConfigActivity" />
         <activity android:name=".activity.MainActivity">
@@ -29,6 +30,11 @@
         <receiver android:name=".receiver.SmsReceiver">
             <intent-filter android:priority="742">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.AlarmReceiver">
+            <intent-filter>
+                <action android:name="com.kuretru.android.singlenet.receiver.AlarmReceiver" />
             </intent-filter>
         </receiver>
     </application>

@@ -14,12 +14,12 @@ SECRET = '123456'  # API服务器通信密钥
 
 def get_username():
     result = subprocess.check_output(['uci', 'get', 'network.{}.username'.format(INTERFACE)])
-    return result
+    return result.replace('\n', '')
 
 
 def get_password():
     result = subprocess.check_output(['uci', 'get', 'network.{}.password'.format(INTERFACE)])
-    return result
+    return result.replace('\n', '')
 
 
 def set_username(username):
@@ -42,6 +42,7 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if token != SECRET:
             self.send_content(self.failure('通讯密钥不符！'))
             return
+
         route = self.path.strip('/')
         if route == '':
             self.get_index()
@@ -59,9 +60,12 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.send_content(self.success(now))
 
-    def get_wan_option(self):
+    def get_wan_option(self, updated=False):
         data = OrderedDict([('username', get_username()), ('password', get_password())])
-        self.send_content(self.success(data))
+        if not updated:
+            self.send_content(self.success(data))
+        else:
+            self.send_content(self.updated(data))
 
     def set_wan_option(self):
         data = self.get_payload()
@@ -73,8 +77,12 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if username:
             set_username(username)
         if password:
-            set_password(password)
-        self.get_wan_option()
+            current_password = get_password()
+            if current_password == password:
+                self.get_wan_option()
+            else:
+                set_password(password)
+                self.get_wan_option(updated=True)
 
     def get_payload(self):
         payload_len = int(self.headers.getheader('Content-Length', 0))
@@ -90,12 +98,17 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def success(self, data):
         self.send_response(200)
         response = OrderedDict([('code', 2000), ('message', 'success'), ('data', data)])
-        return json.dumps(response).replace('\\n', '')
+        return json.dumps(response)
+
+    def updated(self, data):
+        self.send_response(200)
+        response = OrderedDict([('code', 2002), ('message', 'updated'), ('data', data)])
+        return json.dumps(response)
 
     def failure(self, data):
         self.send_response(401)
         response = OrderedDict([('code', 4000), ('message', 'failure'), ('data', data)])
-        return json.dumps(response).replace('\\n', '')
+        return json.dumps(response)
 
     def do_GET(self):
         self.handle_method('GET')

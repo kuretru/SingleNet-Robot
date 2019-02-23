@@ -32,6 +32,13 @@ def set_password(password):
     return get_password()
 
 
+def connect():
+    result = subprocess.check_output(['ifstatus', INTERFACE])
+    connected = json.loads(result)['up']
+    if not connected:
+        subprocess.call(['ifup', INTERFACE])
+
+
 class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def handle_method(self, method):
@@ -77,6 +84,7 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if username:
             set_username(username)
         if password:
+            connect()
             current_password = get_password()
             if current_password == password:
                 self.get_wan_option()

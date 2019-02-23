@@ -37,10 +37,12 @@ public class SinglenetService extends IntentService {
             public void onResponse(Call<ApiResponse<WanOption>> call, Response<ApiResponse<WanOption>> response) {
                 if (response.isSuccessful()) {
                     ApiResponse<WanOption> apiResponse = response.body();
-                    if (code.equals(apiResponse.getData().getPassword())) {
+                    if (ApiResponse.SUCCESS.equals(apiResponse.getCode())) {
                         toastShow("密码相同未更新！");
-                    } else {
+                    } else if (ApiResponse.UPDATED.equals(apiResponse.getCode())) {
                         toastShow("更新密码成功！");
+                    } else {
+                        toastShow(apiResponse.getMessage());
                     }
                     return;
                 }

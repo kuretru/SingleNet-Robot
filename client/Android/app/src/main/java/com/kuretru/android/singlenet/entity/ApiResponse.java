@@ -7,6 +7,12 @@ public class ApiResponse<D> {
 
     public static final Integer SUCCESS = 2000;
 
+    public static final Integer CREATED = 2001;
+
+    public static final Integer UPDATED = 2002;
+
+    public static final Integer DELETED = 2003;
+
     public static final Integer FAILURE = 4000;
 
     private Integer code;

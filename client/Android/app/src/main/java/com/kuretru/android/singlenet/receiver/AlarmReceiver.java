@@ -16,8 +16,8 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.e("xxxyyyzzz", "onAlarmService");
 
-        Intent singlenetIntent = new Intent(context, SmsService.class);
-        context.startService(singlenetIntent);
+        Intent smsIntent = new Intent(context, SmsService.class);
+        context.startService(smsIntent);
 
         AlarmService alarmService = new AlarmService(context);
         alarmService.register();

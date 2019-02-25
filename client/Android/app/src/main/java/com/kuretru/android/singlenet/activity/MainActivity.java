@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.kuretru.android.singlenet.R;
 import com.kuretru.android.singlenet.api.ApiManager;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAlarm;
     private Button btnCancel;
     private Button btnUpdate;
+    private TextView tvAlarm;
     private EditText etUsername;
     private EditText etPassword;
     private ListView listView;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             apiManager = new ApiManager(serverConfig);
             //apiManager.ping(this.getApplicationContext());
         }
+        loadAlarmStatus();
         loadLog();
     }
 
@@ -77,14 +80,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAlarm_onClick(View view) {
-        AlarmService alarmService = new AlarmService(this.getApplicationContext());
+        AlarmService alarmService = new AlarmService(context);
         alarmService.register();
+        loadAlarmStatus();
         ToastUtils.show(context, "注册定时任务成功！");
     }
 
     public void btnCancel_onClick(View view) {
-        AlarmService alarmService = new AlarmService(this.getApplicationContext());
+        AlarmService alarmService = new AlarmService(context);
         alarmService.cancel();
+        loadAlarmStatus();
         ToastUtils.show(context, "取消定时任务成功！");
     }
 
@@ -121,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         this.btnAlarm = findViewById(R.id.btnAlarm);
         this.btnCancel = findViewById(R.id.btnCancel);
         this.btnUpdate = findViewById(R.id.btnUpdate);
+        this.tvAlarm = findViewById(R.id.tvAlarm);
         this.etUsername = findViewById(R.id.etUsername);
         this.etPassword = findViewById(R.id.etPassword);
         this.listView = findViewById(R.id.listView);
@@ -141,6 +147,16 @@ public class MainActivity extends AppCompatActivity {
             btnCancel.setEnabled(true);
             btnUpdate.setEnabled(true);
             this.serverConfig = serverConfig;
+        }
+    }
+
+    private void loadAlarmStatus() {
+        AlarmService alarmService = new AlarmService(context);
+        if (alarmService.isRegistered()) {
+            long nextTime = alarmService.getNextTime();
+            tvAlarm.setText(("下一次任务时间：" + StringUtils.timestampToString(nextTime)));
+        } else {
+            tvAlarm.setText("定时任务未注册！！");
         }
     }
 

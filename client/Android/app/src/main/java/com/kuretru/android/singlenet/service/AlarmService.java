@@ -26,7 +26,7 @@ public class AlarmService {
     }
 
     public void register() {
-        long nextTime = getDebugTime();
+        long nextTime = getNextTime();
         PendingIntent pendingIntent = getPendingIntent();
         alarmManager.setExact(RTC_WAKEUP, nextTime, pendingIntent);
     }
@@ -36,16 +36,33 @@ public class AlarmService {
         alarmManager.cancel(pendingIntent);
     }
 
-    private PendingIntent getPendingIntent() {
-        Intent intent = new Intent(AlarmReceiver.ACTION);
-        intent.setComponent(new ComponentName(context, AlarmReceiver.class));
-        return PendingIntent.getBroadcast(context, SINGLENET_ALARM, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    public boolean isRegistered() {
+        PendingIntent pendingIntent = getPendingIntent(PendingIntent.FLAG_NO_CREATE);
+        return pendingIntent != null;
     }
 
-    private long getDebugTime() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.SECOND, 60);
-        return c.getTime().getTime();
+    public long getNextTime() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        if ((hour == 5 && minute > 50) || (hour > 5 && hour < 22) || (hour == 22 && minute < 50)) {
+            calendar.set(Calendar.HOUR_OF_DAY, 22);
+        } else {
+            calendar.set(Calendar.HOUR_OF_DAY, 5);
+        }
+        calendar.set(Calendar.MINUTE, 50);
+        calendar.set(Calendar.SECOND, 0);
+        return calendar.getTime().getTime();
+    }
+
+    private PendingIntent getPendingIntent() {
+        return getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent getPendingIntent(int flag) {
+        Intent intent = new Intent(AlarmReceiver.ACTION);
+        intent.setComponent(new ComponentName(context, AlarmReceiver.class));
+        return PendingIntent.getBroadcast(context, SINGLENET_ALARM, intent, flag);
     }
 
 }

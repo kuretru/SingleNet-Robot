@@ -78,6 +78,12 @@
                 android:layout_height="wrap_content"
                 android:onClick="btnCancel_onClick"
                 android:text="@string/main_cancel" />
+
+            <TextView
+                android:id="@+id/tvAlarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_panel_config" />
         </LinearLayout>
 
         <LinearLayout

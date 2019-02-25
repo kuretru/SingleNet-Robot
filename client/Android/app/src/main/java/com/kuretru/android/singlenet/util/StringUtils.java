@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 
@@ -12,6 +15,11 @@ public class StringUtils {
 
     public static boolean isNullOrEmpty(String text) {
         return text == null || text.isEmpty();
+    }
+
+    public static String timestampToString(long timestamp) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINESE);
+        return format.format(new Date(timestamp));
     }
 
     public static ApiResponse<String> getErrorResponse(ResponseBody errorBody) {

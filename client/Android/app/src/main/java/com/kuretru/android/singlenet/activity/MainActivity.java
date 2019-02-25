@@ -5,19 +5,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.kuretru.android.singlenet.R;
 import com.kuretru.android.singlenet.api.ApiManager;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
+import com.kuretru.android.singlenet.entity.SystemLog;
 import com.kuretru.android.singlenet.entity.WanOption;
 import com.kuretru.android.singlenet.service.AlarmService;
 import com.kuretru.android.singlenet.service.SmsService;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
+
+import org.litepal.LitePal;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnUpdate;
     private EditText etUsername;
     private EditText etPassword;
+    private ListView listView;
 
     private Context context;
     private ServerConfig serverConfig = null;
@@ -39,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LitePal.initialize(this);
         setContentView(R.layout.activity_main);
         context = this.getApplicationContext();
         initView();
@@ -52,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             apiManager = new ApiManager(serverConfig);
             //apiManager.ping(this.getApplicationContext());
         }
+        loadLog();
     }
 
     public void btnConfig_onClick(View view) {
@@ -112,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         this.btnUpdate = findViewById(R.id.btnUpdate);
         this.etUsername = findViewById(R.id.etUsername);
         this.etPassword = findViewById(R.id.etPassword);
+        this.listView = findViewById(R.id.listView);
     }
 
     private void loadServerConfig() {
@@ -130,6 +142,16 @@ public class MainActivity extends AppCompatActivity {
             btnUpdate.setEnabled(true);
             this.serverConfig = serverConfig;
         }
+    }
+
+    private void loadLog() {
+        List<SystemLog> logs = LitePal.limit(10).order("id desc").find(SystemLog.class);
+        List<String> data = new ArrayList<>(logs.size());
+        for (SystemLog systemLog : logs) {
+            data.add(systemLog.getTime() + " " + systemLog.getMessage());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, data);
+        listView.setAdapter(adapter);
     }
 
 }

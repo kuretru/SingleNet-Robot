@@ -8,10 +8,15 @@ import android.os.Handler;
 import com.kuretru.android.singlenet.api.ApiManager;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
+import com.kuretru.android.singlenet.entity.SystemLog;
 import com.kuretru.android.singlenet.entity.WanOption;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +64,11 @@ public class SinglenetService extends IntentService {
 
     private void toastShow(String message) {
         new Handler().post(() -> ToastUtils.show(SinglenetService.this, message));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINESE);
+        SystemLog systemLog = new SystemLog();
+        systemLog.setTime(format.format(new Date()));
+        systemLog.setMessage(message);
+        systemLog.save();
     }
 
 }

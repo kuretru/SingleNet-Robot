@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="main.db" />
+
+    <version value="1" />
+
+    <list>
+        <mapping class="com.kuretru.android.singlenet.entity.SystemLog" />
+    </list>
+
+    <storage value="internal" />
+
+</litepal>

@@ -162,6 +162,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/main_panel_log" />
         </LinearLayout>
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -13,6 +13,8 @@ import okhttp3.ResponseBody;
 
 public class StringUtils {
 
+    public static final String DEBUG_TAG = "singlenet-robot-debug";
+
     public static boolean isNullOrEmpty(String text) {
         return text == null || text.isEmpty();
     }

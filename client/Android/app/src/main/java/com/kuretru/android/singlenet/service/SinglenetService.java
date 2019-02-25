@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.kuretru.android.singlenet.api.ApiManager;
 import com.kuretru.android.singlenet.entity.ApiResponse;
@@ -28,6 +29,7 @@ public class SinglenetService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
         String code = bundle.getString("code");
+        Log.d(StringUtils.DEBUG_TAG, "SinglenetService: 获取到闪讯密码：" + code);
         WanOption wanOption = new WanOption(null, code);
 
         ServerConfig serverConfig = ConfigUtils.loadServerConfig(this);
@@ -60,6 +62,7 @@ public class SinglenetService extends IntentService {
 
     private void toastShow(String message) {
         new Handler().post(() -> ToastUtils.show(SinglenetService.this, message));
+        Log.d(StringUtils.DEBUG_TAG, "SinglenetService: " + message);
         SystemLog systemLog = new SystemLog();
         systemLog.setTime(StringUtils.timestampToString(System.currentTimeMillis()));
         systemLog.setMessage(message);

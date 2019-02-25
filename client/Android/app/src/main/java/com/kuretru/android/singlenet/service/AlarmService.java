@@ -27,12 +27,12 @@ public class AlarmService {
 
     public void register() {
         long nextTime = getNextTime();
-        PendingIntent pendingIntent = getPendingIntent();
+        PendingIntent pendingIntent = getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setExact(RTC_WAKEUP, nextTime, pendingIntent);
     }
 
     public void cancel() {
-        PendingIntent pendingIntent = getPendingIntent();
+        PendingIntent pendingIntent = getPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT);
         alarmManager.cancel(pendingIntent);
     }
 
@@ -43,20 +43,20 @@ public class AlarmService {
 
     public long getNextTime() {
         Calendar calendar = Calendar.getInstance();
+        //calendar.add(Calendar.SECOND, 10);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if ((hour == 5 && minute > 50) || (hour > 5 && hour < 22) || (hour == 22 && minute < 50)) {
             calendar.set(Calendar.HOUR_OF_DAY, 22);
         } else {
+            if (hour >= 22) {
+                calendar.add(Calendar.DATE, 1);
+            }
             calendar.set(Calendar.HOUR_OF_DAY, 5);
         }
         calendar.set(Calendar.MINUTE, 50);
         calendar.set(Calendar.SECOND, 0);
         return calendar.getTime().getTime();
-    }
-
-    private PendingIntent getPendingIntent() {
-        return getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent getPendingIntent(int flag) {

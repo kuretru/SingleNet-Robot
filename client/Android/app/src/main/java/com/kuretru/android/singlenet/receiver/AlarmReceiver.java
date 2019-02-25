@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.kuretru.android.singlenet.service.AlarmService;
 import com.kuretru.android.singlenet.service.SmsService;
+import com.kuretru.android.singlenet.util.StringUtils;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -14,7 +15,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("xxxyyyzzz", "onAlarmService");
+        Log.d(StringUtils.DEBUG_TAG, "AlarmReceiver: onAlarmReceive");
 
         Intent smsIntent = new Intent(context, SmsService.class);
         context.startService(smsIntent);

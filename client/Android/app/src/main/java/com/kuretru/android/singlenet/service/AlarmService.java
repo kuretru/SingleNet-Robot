@@ -34,6 +34,7 @@ public class AlarmService {
     public void cancel() {
         PendingIntent pendingIntent = getPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT);
         alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
     public boolean isRegistered() {

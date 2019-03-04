@@ -4,8 +4,10 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SystemLog extends LitePalSupport {
 
     private Integer id;

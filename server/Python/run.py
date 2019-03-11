@@ -84,13 +84,13 @@ class SingleNetRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if username:
             set_username(username)
         if password:
-            connect()
             current_password = get_password()
             if current_password == password:
                 self.get_wan_option()
             else:
                 set_password(password)
                 self.get_wan_option(updated=True)
+            connect()
 
     def get_payload(self):
         payload_len = int(self.headers.getheader('Content-Length', 0))

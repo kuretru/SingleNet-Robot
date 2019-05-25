@@ -78,7 +78,12 @@ public class ConfigActivity extends AppCompatActivity {
                     .setTitle("提示")
                     .setMessage("该服务器尚未测试通过，确定要保存吗？")
                     .setPositiveButton("确定", (dialog, which) -> {
-                        saveServerConfig(serverConfig);
+                        try {
+                            ApiManager apiManager = new ApiManager(serverConfig);
+                            saveServerConfig(serverConfig);
+                        } catch (Exception e) {
+                            ToastUtils.show(getApplicationContext(), e.getMessage());
+                        }
                     })
                     .setNegativeButton("取消", (dialog, which) -> {
 

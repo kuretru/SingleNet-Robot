@@ -2,11 +2,14 @@ package com.kuretru.android.singlenet.api;
 
 import android.content.Context;
 
+import com.kuretru.android.singlenet.activity.ConfigActivity;
 import com.kuretru.android.singlenet.entity.ApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.WanOption;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,7 +29,8 @@ public class ApiManager {
     private SinglenetApi singlenetApi;
 
     public ApiManager(ServerConfig serverConfig) {
-        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(3, TimeUnit.SECONDS);
         okHttpClient.addInterceptor(chain -> {
             Request original = chain.request();
             Request request = original.newBuilder()
@@ -51,10 +55,12 @@ public class ApiManager {
     }
 
     public void ping(Context context) {
+        ConfigActivity configActivity = (ConfigActivity) context;
         Call<ApiResponse<String>> call = this.ping();
         call.enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                configActivity.closeProgressDialog(response.isSuccessful());
                 if (response.isSuccessful()) {
                     ToastUtils.show(context, "与服务器通讯成功！");
                     return;
@@ -65,6 +71,7 @@ public class ApiManager {
 
             @Override
             public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                configActivity.closeProgressDialog(false);
                 ToastUtils.show(context, "连接失败：" + t.getMessage());
             }
         });

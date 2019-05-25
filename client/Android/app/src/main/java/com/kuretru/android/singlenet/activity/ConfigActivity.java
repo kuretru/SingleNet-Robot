@@ -1,6 +1,8 @@
 package com.kuretru.android.singlenet.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -24,9 +26,11 @@ public class ConfigActivity extends AppCompatActivity {
     private static final String[] permissionsList = new String[]{
             Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS
     };
+    private boolean testSuccess = false;
     private TextView etUrl;
     private TextView etSecret;
     private SharedPreferences sharedPreferences = null;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +52,17 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     public void btnTest_onClick(View view) {
+        this.testSuccess = false;
         ServerConfig serverConfig = loadServerConfig();
         if (!checkServerConfig(serverConfig)) {
             return;
         }
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("测试中......");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         ApiManager apiManager = new ApiManager(serverConfig);
-        apiManager.ping(this.getApplicationContext());
+        apiManager.ping(this);
     }
 
     public void btnSave_onClick(View view) {
@@ -64,14 +73,21 @@ public class ConfigActivity extends AppCompatActivity {
         if (!checkServerConfig(serverConfig)) {
             return;
         }
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("config_url", serverConfig.getUrl());
-        editor.putString("config_secret", serverConfig.getSecret());
-        editor.apply();
-        ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
+        if (!testSuccess) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setTitle("提示")
+                    .setMessage("该服务器尚未测试通过，确定要保存吗？")
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        saveServerConfig(serverConfig);
+                    })
+                    .setNegativeButton("取消", (dialog, which) -> {
 
-        checkPermission();
-        this.finish();
+                    })
+                    .create();
+            alertDialog.show();
+        } else {
+            saveServerConfig(serverConfig);
+        }
     }
 
     private ServerConfig loadServerConfig() {
@@ -86,17 +102,35 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private boolean checkServerConfig(ServerConfig serverConfig) {
-        if (StringUtils.isNullOrEmpty(serverConfig.getUrl())) {
+        String url = serverConfig.getUrl();
+        if (StringUtils.isNullOrEmpty(url)) {
             ToastUtils.show(getApplicationContext(), "路由器接口地址不能为空！");
             etUrl.requestFocus();
             return false;
         }
-        if (StringUtils.isNullOrEmpty(serverConfig.getSecret())) {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            ToastUtils.show(getApplicationContext(), "URL地址必须以http(s)://开头！");
+            etUrl.requestFocus();
+            return false;
+        }
+        String secret = serverConfig.getSecret();
+        if (StringUtils.isNullOrEmpty(secret)) {
             ToastUtils.show(getApplicationContext(), "接口密码不能为空！");
             etSecret.requestFocus();
             return false;
         }
         return true;
+    }
+
+    private void saveServerConfig(ServerConfig serverConfig) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("config_url", serverConfig.getUrl());
+        editor.putString("config_secret", serverConfig.getSecret());
+        editor.apply();
+        ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
+
+        checkPermission();
+        this.finish();
     }
 
     private void checkPermission() {
@@ -109,6 +143,11 @@ public class ConfigActivity extends AppCompatActivity {
         if (permissions.size() > 0) {
             ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), 1);
         }
+    }
+
+    public void closeProgressDialog(boolean success) {
+        progressDialog.cancel();
+        this.testSuccess = success;
     }
 
     private void initView() {

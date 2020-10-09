@@ -44,18 +44,18 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
                 .build();
         mapper = retrofit.create(LuciRpcMapper.class);
 
-        authToken = getAuthToken();
+        remoteLogin();
     }
 
     @Override
-    public String getAuthToken() throws ApiServiceException {
+    public void remoteLogin() throws ApiServiceException {
         LuciRpcRequest request = LuciRpcRequestFactory.auth(serverConfig.getUsername(), serverConfig.getPassword());
         Call<LuciRpcResponse> call = mapper.auth(request);
         LuciRpcResponse response = RetrofitUtils.syncExecute(call);
         if (StringUtils.isNullOrEmpty(response.getResult())) {
             throw new ApiServiceException("获取AuthToken失败");
         }
-        return response.getResult().trim();
+        this.authToken = response.getResult().trim();
     }
 
     @Override
@@ -67,7 +67,9 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
 
     @Override
     public Call<LuciRpcResponse> setUsername(String username) {
-        return null;
+        LuciRpcRequest request = LuciRpcRequestFactory.setUsername(serverConfig.getNetworkInterface(), username);
+        Call<LuciRpcResponse> call = mapper.setUsername(request, authToken);
+        return call;
     }
 
     @Override
@@ -79,18 +81,20 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
 
     @Override
     public Call<LuciRpcResponse> setPassword(String password) {
-        return null;
-    }
-
-    @Override
-    public Call<LuciRpcResponse> ifStatus() {
-        LuciRpcRequest request = LuciRpcRequestFactory.ifStatus(serverConfig.getNetworkInterface());
-        Call<LuciRpcResponse> call = mapper.ifStatus(request, authToken);
+        LuciRpcRequest request = LuciRpcRequestFactory.setPassword(serverConfig.getNetworkInterface(), password);
+        Call<LuciRpcResponse> call = mapper.setPassword(request, authToken);
         return call;
     }
 
     @Override
-    public Call<LuciRpcResponse> ifUp() {
+    public Call<LuciRpcResponse> getInterfaceStatus() {
+        LuciRpcRequest request = LuciRpcRequestFactory.getInterfaceStatus(serverConfig.getNetworkInterface());
+        Call<LuciRpcResponse> call = mapper.getInterfaceStatus(request, authToken);
+        return call;
+    }
+
+    @Override
+    public Call<LuciRpcResponse> setInterfaceUp() {
         return null;
     }
 

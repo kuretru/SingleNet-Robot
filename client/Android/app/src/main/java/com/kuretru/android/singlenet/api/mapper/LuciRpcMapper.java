@@ -26,6 +26,6 @@ public interface LuciRpcMapper {
     Call<LuciRpcResponse> setPassword(@Body LuciRpcRequest request, @Query("auth") String authToken);
 
     @POST("/cgi-bin/luci/rpc/sys")
-    Call<LuciRpcResponse> ifStatus(@Body LuciRpcRequest request, @Query("auth") String authToken);
+    Call<LuciRpcResponse> getInterfaceStatus(@Body LuciRpcRequest request, @Query("auth") String authToken);
 
 }

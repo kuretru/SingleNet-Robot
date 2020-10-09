@@ -22,18 +22,36 @@ public class LuciRpcRequestFactory {
         return new LuciRpcRequest(2, "get", params);
     }
 
+    public static LuciRpcRequest setUsername(String networkInterface, String username) {
+        List<String> params = new ArrayList<>(4);
+        params.add("network");
+        params.add(networkInterface);
+        params.add("username");
+        params.add(username);
+        return new LuciRpcRequest(3, "set", params);
+    }
+
     public static LuciRpcRequest getPassword(String networkInterface) {
         List<String> params = new ArrayList<>(3);
         params.add("network");
         params.add(networkInterface);
         params.add("password");
-        return new LuciRpcRequest(3, "get", params);
+        return new LuciRpcRequest(4, "get", params);
     }
 
-    public static LuciRpcRequest ifStatus(String networkInterface) {
+    public static LuciRpcRequest setPassword(String networkInterface, String password) {
+        List<String> params = new ArrayList<>(4);
+        params.add("network");
+        params.add(networkInterface);
+        params.add("password");
+        params.add(password);
+        return new LuciRpcRequest(5, "set", params);
+    }
+
+    public static LuciRpcRequest getInterfaceStatus(String networkInterface) {
         List<String> params = new ArrayList<>(1);
         params.add("/sbin/ifstatus " + networkInterface);
-        return new LuciRpcRequest(4, "exec", params);
+        return new LuciRpcRequest(6, "exec", params);
     }
 
 }

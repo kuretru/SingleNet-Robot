@@ -1,5 +1,6 @@
 package com.kuretru.android.singlenet.api.service;
 
+import com.kuretru.android.singlenet.entity.InterfaceStatusEnum;
 import com.kuretru.android.singlenet.entity.NetworkOption;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 
@@ -28,5 +29,13 @@ public interface SinglenetApiService {
      * @throws ApiServiceException API服务调用异常
      */
     NetworkOption setNetworkOption(NetworkOption networkOption) throws ApiServiceException;
+
+    /**
+     * 获取服务端网络接口状态
+     *
+     * @return 网络接口状态
+     * @throws ApiServiceException API服务调用异常
+     */
+    InterfaceStatusEnum getInterfaceStatus() throws ApiServiceException;
 
 }

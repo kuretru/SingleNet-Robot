@@ -45,6 +45,13 @@ public interface LuciRpcManager {
     Call<LuciRpcResponse> setPassword(String password);
 
     /**
+     * 保存路由器配置
+     *
+     * @return 服务调用
+     */
+    Call<LuciRpcResponse> commit();
+
+    /**
      * 获取路由器网络接口状态
      *
      * @return 服务调用

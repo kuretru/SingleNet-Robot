@@ -61,41 +61,50 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
     @Override
     public Call<LuciRpcResponse> getUsername() {
         LuciRpcRequest request = LuciRpcRequestFactory.getUsername(serverConfig.getNetworkInterface());
-        Call<LuciRpcResponse> call = mapper.getUsername(request, authToken);
+        Call<LuciRpcResponse> call = mapper.uci(request, authToken);
         return call;
     }
 
     @Override
     public Call<LuciRpcResponse> setUsername(String username) {
         LuciRpcRequest request = LuciRpcRequestFactory.setUsername(serverConfig.getNetworkInterface(), username);
-        Call<LuciRpcResponse> call = mapper.setUsername(request, authToken);
+        Call<LuciRpcResponse> call = mapper.uci(request, authToken);
         return call;
     }
 
     @Override
     public Call<LuciRpcResponse> getPassword() {
         LuciRpcRequest request = LuciRpcRequestFactory.getPassword(serverConfig.getNetworkInterface());
-        Call<LuciRpcResponse> call = mapper.getPassword(request, authToken);
+        Call<LuciRpcResponse> call = mapper.uci(request, authToken);
         return call;
     }
 
     @Override
     public Call<LuciRpcResponse> setPassword(String password) {
         LuciRpcRequest request = LuciRpcRequestFactory.setPassword(serverConfig.getNetworkInterface(), password);
-        Call<LuciRpcResponse> call = mapper.setPassword(request, authToken);
+        Call<LuciRpcResponse> call = mapper.uci(request, authToken);
+        return call;
+    }
+
+    @Override
+    public Call<LuciRpcResponse> commit() {
+        LuciRpcRequest request = LuciRpcRequestFactory.commit();
+        Call<LuciRpcResponse> call = mapper.uci(request, authToken);
         return call;
     }
 
     @Override
     public Call<LuciRpcResponse> getInterfaceStatus() {
         LuciRpcRequest request = LuciRpcRequestFactory.getInterfaceStatus(serverConfig.getNetworkInterface());
-        Call<LuciRpcResponse> call = mapper.getInterfaceStatus(request, authToken);
+        Call<LuciRpcResponse> call = mapper.sys(request, authToken);
         return call;
     }
 
     @Override
     public Call<LuciRpcResponse> setInterfaceUp() {
-        return null;
+        LuciRpcRequest request = LuciRpcRequestFactory.setInterfaceUp(serverConfig.getNetworkInterface());
+        Call<LuciRpcResponse> call = mapper.sys(request, authToken);
+        return call;
     }
 
 }

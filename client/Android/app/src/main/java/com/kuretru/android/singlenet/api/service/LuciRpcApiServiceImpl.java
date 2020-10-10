@@ -17,28 +17,28 @@ import retrofit2.Call;
 
 public class LuciRpcApiServiceImpl implements SinglenetApiService {
 
-    private final LuciRpcManager service;
+    private final LuciRpcManager manager;
 
     public LuciRpcApiServiceImpl(LuciRpcServerConfig serverConfig) throws ApiServiceException {
-        service = new LuciRpcManagerImpl(serverConfig);
+        manager = new LuciRpcManagerImpl(serverConfig);
     }
 
     @Override
     public void ping() throws ApiServiceException {
-        service.remoteLogin();
+        manager.remoteLogin();
     }
 
     @Override
     public NetworkOption getNetworkOption() throws ApiServiceException {
         NetworkOption result = new NetworkOption();
 
-        LuciRpcResponse response = RetrofitUtils.syncExecute(service.getUsername());
+        LuciRpcResponse response = RetrofitUtils.syncExecute(manager.getUsername());
         if (StringUtils.isNullOrBlank(response.getResult())) {
             throw new ApiServiceException("路由器拨号用户名为空，请检查路由器拨号接口名称是否正确");
         }
         result.setUsername(response.getResult().trim());
 
-        response = RetrofitUtils.syncExecute(service.getPassword());
+        response = RetrofitUtils.syncExecute(manager.getPassword());
         if (StringUtils.isNullOrBlank(response.getResult())) {
             throw new ApiServiceException("路由器拨号密码为空，请检查路由器拨号接口名称是否正确");
         }
@@ -49,19 +49,30 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
 
     @Override
     public NetworkOption setNetworkOption(NetworkOption networkOption) throws ApiServiceException {
+        boolean changed = false;
+
         if (!StringUtils.isNullOrBlank(networkOption.getUsername())) {
-            Call<LuciRpcResponse> call = service.setUsername(networkOption.getUsername().trim());
+            Call<LuciRpcResponse> call = manager.setUsername(networkOption.getUsername().trim());
             LuciRpcResponse response = RetrofitUtils.syncExecute(call);
             if (!"true".equalsIgnoreCase(response.getResult())) {
                 throw new ApiServiceException("更新用户名失败：" + response.getResult());
             }
+            changed = true;
         }
-
         if (!StringUtils.isNullOrBlank(networkOption.getPassword())) {
-            Call<LuciRpcResponse> call = service.setPassword(networkOption.getPassword().trim());
+            Call<LuciRpcResponse> call = manager.setPassword(networkOption.getPassword().trim());
             LuciRpcResponse response = RetrofitUtils.syncExecute(call);
             if (!"true".equalsIgnoreCase(response.getResult())) {
                 throw new ApiServiceException("更新密码失败：" + response.getResult());
+            }
+            changed = true;
+        }
+
+        if (changed) {
+            Call<LuciRpcResponse> call = manager.commit();
+            LuciRpcResponse response = RetrofitUtils.syncExecute(call);
+            if (!"true".equalsIgnoreCase(response.getResult())) {
+                throw new ApiServiceException("保存配置失败：" + response.getResult());
             }
         }
         return getNetworkOption();
@@ -69,7 +80,7 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
 
     @Override
     public InterfaceStatusEnum getInterfaceStatus() throws ApiServiceException {
-        LuciRpcResponse response = RetrofitUtils.syncExecute(service.getInterfaceStatus());
+        LuciRpcResponse response = RetrofitUtils.syncExecute(manager.getInterfaceStatus());
         String json = response.getResult().trim().replace("\n", "").replace("\t", "");
         if (StringUtils.isNullOrEmpty(json)) {
             throw new ApiServiceException("接口状态返回空");
@@ -84,6 +95,15 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
             }
         }
         return InterfaceStatusEnum.DOWN;
+    }
+
+    @Override
+    public InterfaceStatusEnum setInterfaceUp() throws ApiServiceException {
+        LuciRpcResponse response = RetrofitUtils.syncExecute(manager.setInterfaceUp());
+        if (!"true".equalsIgnoreCase(response.getResult())) {
+            throw new ApiServiceException("重启网络端接口失败：" + response.getResult());
+        }
+        return getInterfaceStatus();
     }
 
 }

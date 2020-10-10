@@ -38,4 +38,12 @@ public interface SinglenetApiService {
      */
     InterfaceStatusEnum getInterfaceStatus() throws ApiServiceException;
 
+    /**
+     * 重启服务端网络接口
+     *
+     * @return 网络接口状态
+     * @throws ApiServiceException API服务调用异常
+     */
+    InterfaceStatusEnum setInterfaceUp() throws ApiServiceException;
+
 }

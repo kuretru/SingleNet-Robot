@@ -14,18 +14,9 @@ public interface LuciRpcMapper {
     Call<LuciRpcResponse> auth(@Body LuciRpcRequest request);
 
     @POST("/cgi-bin/luci/rpc/uci")
-    Call<LuciRpcResponse> getUsername(@Body LuciRpcRequest request, @Query("auth") String authToken);
-
-    @POST("/cgi-bin/luci/rpc/uci")
-    Call<LuciRpcResponse> setUsername(@Body LuciRpcRequest request, @Query("auth") String authToken);
-
-    @POST("/cgi-bin/luci/rpc/uci")
-    Call<LuciRpcResponse> getPassword(@Body LuciRpcRequest request, @Query("auth") String authToken);
-
-    @POST("/cgi-bin/luci/rpc/uci")
-    Call<LuciRpcResponse> setPassword(@Body LuciRpcRequest request, @Query("auth") String authToken);
+    Call<LuciRpcResponse> uci(@Body LuciRpcRequest request, @Query("auth") String authToken);
 
     @POST("/cgi-bin/luci/rpc/sys")
-    Call<LuciRpcResponse> getInterfaceStatus(@Body LuciRpcRequest request, @Query("auth") String authToken);
+    Call<LuciRpcResponse> sys(@Body LuciRpcRequest request, @Query("auth") String authToken);
 
 }

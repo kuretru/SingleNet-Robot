@@ -3,7 +3,7 @@ package com.kuretru.android.singlenet.entity;
 import lombok.Data;
 
 @Data
-public class ApiResponse<D> {
+public class RestfulApiResponse<D> {
 
     public static final Integer SUCCESS = 2000;
 

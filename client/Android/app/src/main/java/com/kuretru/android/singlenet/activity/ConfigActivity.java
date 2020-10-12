@@ -61,21 +61,13 @@ public class ConfigActivity extends AppCompatActivity {
         if (sharedPreferences == null) {
             ToastUtils.show(getApplicationContext(), getString(R.string.exception_exit));
         }
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(SystemConstants.CONFIG_SERVER_URL);
-        editor.remove(SystemConstants.CONFIG_NETWORK_INTERFACE);
-        editor.remove(SystemConstants.CONFIG_SERVER_TYPE);
-        editor.remove(SystemConstants.CONFIG_USERNAME);
-        editor.remove(SystemConstants.CONFIG_PASSWORD);
-        editor.remove(SystemConstants.CONFIG_AUTH_TOKEN);
-        editor.apply();
-        initView();
+        ConfigUtils.clearServerConfig(getApplicationContext());
     }
 
     public void btnTest_onClick(View view) {
         this.testSuccess = false;
         ServerConfig serverConfig = getServerConfig();
-        if (!checkServerConfig(serverConfig)) {
+        if (!validServerConfig(serverConfig)) {
             return;
         }
         progressDialog = new ProgressDialog(this);
@@ -103,7 +95,7 @@ public class ConfigActivity extends AppCompatActivity {
             ToastUtils.show(getApplicationContext(), getString(R.string.exception_exit));
         }
         ServerConfig serverConfig = getServerConfig();
-        if (!checkServerConfig(serverConfig)) {
+        if (!validServerConfig(serverConfig)) {
             return;
         }
         if (!testSuccess) {
@@ -134,7 +126,7 @@ public class ConfigActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkServerConfig(ServerConfig serverConfig) {
+    private boolean validServerConfig(ServerConfig serverConfig) {
         String serverUrl = serverConfig.getServerUrl();
         if (StringUtils.isNullOrBlank(serverUrl)) {
             ToastUtils.show(getApplicationContext(), "路由器接口地址不能为空！");
@@ -146,12 +138,30 @@ public class ConfigActivity extends AppCompatActivity {
             etServerUrl.requestFocus();
             return false;
         }
+        if (!serverUrl.endsWith("/")) {
+            ToastUtils.show(getApplicationContext(), "URL地址结尾不能含有！");
+            etServerUrl.requestFocus();
+            return false;
+        }
 
-        String networkInterface = serverConfig.getNetworkInterface();
-        if (StringUtils.isNullOrBlank(networkInterface)) {
+        if (StringUtils.isNullOrBlank(serverConfig.getNetworkInterface())) {
             ToastUtils.show(getApplicationContext(), "路由器接口不能为空！");
             etNetworkInterface.requestFocus();
             return false;
+        }
+
+        if (SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC.equals(serverConfig.getServerType())) {
+            if (StringUtils.isNullOrBlank(serverConfig.getUsername()) || StringUtils.isNullOrBlank(serverConfig.getPassword())) {
+                ToastUtils.show(getApplicationContext(), "用户名和密码不能为空！");
+                etPassword.requestFocus();
+                return false;
+            }
+        } else {
+            if (StringUtils.isNullOrBlank(serverConfig.getAuthToken())) {
+                ToastUtils.show(getApplicationContext(), "通信密钥不能为空！");
+                etAuthToken.requestFocus();
+                return false;
+            }
         }
         return true;
     }

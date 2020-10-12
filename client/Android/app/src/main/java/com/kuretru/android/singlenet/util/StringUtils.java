@@ -3,7 +3,7 @@ package com.kuretru.android.singlenet.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kuretru.android.singlenet.entity.ApiResponse;
+import com.kuretru.android.singlenet.entity.RestfulApiResponse;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -52,11 +52,11 @@ public class StringUtils {
         return format.format(new Date(timestamp));
     }
 
-    public static ApiResponse<String> getErrorResponse(ResponseBody errorBody) {
+    public static RestfulApiResponse<String> getErrorResponse(ResponseBody errorBody) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String json = errorBody.string();
-            return mapper.readValue(json, new TypeReference<ApiResponse<String>>() {
+            return mapper.readValue(json, new TypeReference<RestfulApiResponse<String>>() {
             });
         } catch (IOException e) {
             e.printStackTrace();

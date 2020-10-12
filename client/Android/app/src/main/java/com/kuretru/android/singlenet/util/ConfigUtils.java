@@ -46,4 +46,21 @@ public class ConfigUtils {
         editor.apply();
     }
 
+    /**
+     * 清空配置文件
+     *
+     * @param context Context
+     */
+    public static void clearServerConfig(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(SystemConstants.CONFIG_SERVER_URL);
+        editor.remove(SystemConstants.CONFIG_NETWORK_INTERFACE);
+        editor.remove(SystemConstants.CONFIG_SERVER_TYPE);
+        editor.remove(SystemConstants.CONFIG_USERNAME);
+        editor.remove(SystemConstants.CONFIG_PASSWORD);
+        editor.remove(SystemConstants.CONFIG_AUTH_TOKEN);
+        editor.apply();
+    }
+
 }

@@ -48,10 +48,22 @@ public class LuciRpcRequestFactory {
         return new LuciRpcRequest(5, "set", params);
     }
 
+    public static LuciRpcRequest commit() {
+        List<String> params = new ArrayList<>(1);
+        params.add("network");
+        return new LuciRpcRequest(6, "commit", params);
+    }
+
     public static LuciRpcRequest getInterfaceStatus(String networkInterface) {
         List<String> params = new ArrayList<>(1);
         params.add("/sbin/ifstatus " + networkInterface);
-        return new LuciRpcRequest(6, "exec", params);
+        return new LuciRpcRequest(7, "exec", params);
+    }
+
+    public static LuciRpcRequest setInterfaceUp(String networkInterface) {
+        List<String> params = new ArrayList<>(1);
+        params.add("/sbin/ifdown " + networkInterface + " && /sbin/ifup " + networkInterface);
+        return new LuciRpcRequest(8, "exec", params);
     }
 
 }

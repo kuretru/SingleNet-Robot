@@ -1,16 +1,39 @@
 package com.kuretru.android.singlenet.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ServerConfig {
 
-    private String url;
+    /**
+     * 服务端地址
+     * 合理的地址：'http://192.168.1.1:8080'
+     */
+    private String serverUrl;
 
-    private String secret;
+    /**
+     * 网络接口名称(OpenWrt默认值为'wan')
+     */
+    private String networkInterface;
+
+    /**
+     * 服务端类型
+     */
+    private String serverType;
+
+    /**
+     * OpenWrt登录用户名(默认值为'root')
+     */
+    private String username;
+
+    /**
+     * OpenWrt登录密码
+     */
+    private String password;
+
+    /**
+     * 服务端通信密钥
+     */
+    private String authToken;
 
 }

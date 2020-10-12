@@ -3,7 +3,7 @@ package com.kuretru.android.singlenet.api.manager;
 import com.kuretru.android.singlenet.api.mapper.LuciRpcMapper;
 import com.kuretru.android.singlenet.entity.LuciRpcRequest;
 import com.kuretru.android.singlenet.entity.LuciRpcResponse;
-import com.kuretru.android.singlenet.entity.config.LuciRpcServerConfig;
+import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.factory.LuciRpcRequestFactory;
 import com.kuretru.android.singlenet.util.RetrofitUtils;
@@ -19,11 +19,11 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class LuciRpcManagerImpl implements LuciRpcManager {
 
-    private final LuciRpcServerConfig serverConfig;
+    private final ServerConfig serverConfig;
     private final LuciRpcMapper mapper;
     private String authToken;
 
-    public LuciRpcManagerImpl(LuciRpcServerConfig serverConfig) throws ApiServiceException {
+    public LuciRpcManagerImpl(ServerConfig serverConfig) throws ApiServiceException {
         this.serverConfig = serverConfig;
 
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
@@ -53,7 +53,7 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
         Call<LuciRpcResponse> call = mapper.auth(request);
         LuciRpcResponse response = RetrofitUtils.syncExecute(call);
         if (StringUtils.isNullOrEmpty(response.getResult())) {
-            throw new ApiServiceException("获取AuthToken失败");
+            throw new ApiServiceException("获取AuthToken失败，密码错误");
         }
         this.authToken = response.getResult().trim();
     }

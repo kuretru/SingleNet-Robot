@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,23 +19,90 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvUrl"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvServerUrl"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/config_url" />
+                android:layout_weight=".30"
+                android:text="@string/config_server_url" />
 
             <EditText
-                android:id="@+id/etUrl"
-                android:layout_width="wrap_content"
+                android:id="@+id/etServerUrl"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".70"
                 android:ems="10"
-                android:hint="@string/config_url_hint"
+                android:hint="@string/config_server_url_hint"
                 android:inputType="textUri" />
         </LinearLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:paddingBottom="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNetworkInterface"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_network_interface" />
+
+            <EditText
+                android:id="@+id/etNetworkInterface"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:ems="10"
+                android:hint="@string/config_network_interface_hint"
+                android:inputType="text"
+                android:text="@string/config_network_interface_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvServerType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_server_type" />
+
+            <RadioGroup
+                android:id="@+id/rgServerType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:checkedButton="@id/rbLuciRpc"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbLuciRpc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/config_server_type_luci_rpc" />
+
+                <RadioButton
+                    android:id="@+id/rbRestfulApi"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/config_server_type_restful_api" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -44,19 +110,70 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvSecret"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvUsername"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/config_secret" />
+                android:layout_weight=".30"
+                android:text="@string/config_username" />
 
             <EditText
-                android:id="@+id/etSecret"
-                android:layout_width="wrap_content"
+                android:id="@+id/etUsername"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".70"
                 android:ems="10"
-                android:hint="@string/config_secret_hint"
+                android:hint="@string/config_username_hint"
+                android:inputType="text"
+                android:text="@string/config_username_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_password" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:ems="10"
+                android:hint="@string/config_password_hint"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llAuthToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvAuthToken"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_auth_token" />
+
+            <EditText
+                android:id="@+id/etAuthToken"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:ems="10"
+                android:hint="@string/config_auth_token_hint"
                 android:inputType="text" />
         </LinearLayout>
 
@@ -64,6 +181,7 @@
             style="?attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="20dp"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
@@ -95,5 +213,6 @@
                 android:text="@string/config_save" />
 
         </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

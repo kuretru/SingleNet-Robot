@@ -7,15 +7,21 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.kuretru.android.singlenet.R;
-import com.kuretru.android.singlenet.api.ApiManager;
+import com.kuretru.android.singlenet.api.service.SinglenetApiService;
+import com.kuretru.android.singlenet.constant.SystemConstants;
 import com.kuretru.android.singlenet.entity.ServerConfig;
+import com.kuretru.android.singlenet.exception.ApiServiceException;
+import com.kuretru.android.singlenet.factory.SinglenetApiServiceFactory;
+import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
@@ -27,11 +33,20 @@ public class ConfigActivity extends AppCompatActivity {
     private static final String[] permissionsList = new String[]{
             Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS
     };
-    private boolean testSuccess = false;
-    private TextView etUrl;
-    private TextView etSecret;
     private SharedPreferences sharedPreferences = null;
     private ProgressDialog progressDialog;
+
+    private EditText etServerUrl;
+    private EditText etNetworkInterface;
+    private EditText etUsername;
+    private EditText etPassword;
+    private EditText etAuthToken;
+    private RadioGroup rgServerType;
+    private LinearLayout llUsername;
+    private LinearLayout llPassword;
+    private LinearLayout llAuthToken;
+
+    private boolean testSuccess = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +54,7 @@ public class ConfigActivity extends AppCompatActivity {
         setContentView(R.layout.activity_config);
         sharedPreferences = this.getSharedPreferences("config", MODE_PRIVATE);
         initView();
+        setServerConfig(ConfigUtils.loadServerConfig(getApplicationContext()));
     }
 
     public void btnClear_onClick(View view) {
@@ -46,15 +62,19 @@ public class ConfigActivity extends AppCompatActivity {
             ToastUtils.show(getApplicationContext(), getString(R.string.exception_exit));
         }
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove("config_url");
-        editor.remove("config_secret");
+        editor.remove(SystemConstants.CONFIG_SERVER_URL);
+        editor.remove(SystemConstants.CONFIG_NETWORK_INTERFACE);
+        editor.remove(SystemConstants.CONFIG_SERVER_TYPE);
+        editor.remove(SystemConstants.CONFIG_USERNAME);
+        editor.remove(SystemConstants.CONFIG_PASSWORD);
+        editor.remove(SystemConstants.CONFIG_AUTH_TOKEN);
         editor.apply();
         initView();
     }
 
     public void btnTest_onClick(View view) {
         this.testSuccess = false;
-        ServerConfig serverConfig = loadServerConfig();
+        ServerConfig serverConfig = getServerConfig();
         if (!checkServerConfig(serverConfig)) {
             return;
         }
@@ -62,15 +82,27 @@ public class ConfigActivity extends AppCompatActivity {
         progressDialog.setMessage("测试中......");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-        ApiManager apiManager = new ApiManager(serverConfig);
-        apiManager.ping(this);
+
+        new Thread(() -> {
+            try {
+                SinglenetApiService apiService = SinglenetApiServiceFactory.build(serverConfig);
+                apiService.ping();
+                closeProgressDialog(true);
+                runOnUiThread(() -> ToastUtils.show(getApplicationContext(), "与服务器通讯成功！"));
+            } catch (ApiServiceException e) {
+                closeProgressDialog(false);
+                runOnUiThread(() -> {
+                    ToastUtils.show(getApplicationContext(), e.getMessage());
+                });
+            }
+        }).start();
     }
 
     public void btnSave_onClick(View view) {
         if (sharedPreferences == null) {
             ToastUtils.show(getApplicationContext(), getString(R.string.exception_exit));
         }
-        ServerConfig serverConfig = loadServerConfig();
+        ServerConfig serverConfig = getServerConfig();
         if (!checkServerConfig(serverConfig)) {
             return;
         }
@@ -79,15 +111,9 @@ public class ConfigActivity extends AppCompatActivity {
                     .setTitle("提示")
                     .setMessage("该服务器尚未测试通过，确定要保存吗？")
                     .setPositiveButton("确定", (dialog, which) -> {
-                        try {
-                            ApiManager apiManager = new ApiManager(serverConfig);
-                            saveServerConfig(serverConfig);
-                        } catch (Exception e) {
-                            ToastUtils.show(getApplicationContext(), e.getMessage());
-                        }
+                        saveServerConfig(serverConfig);
                     })
                     .setNegativeButton("取消", (dialog, which) -> {
-
                     })
                     .create();
             alertDialog.show();
@@ -96,45 +122,88 @@ public class ConfigActivity extends AppCompatActivity {
         }
     }
 
-    private ServerConfig loadServerConfig() {
-        String url = etUrl.getText().toString().trim();
-        String secret = etSecret.getText().toString().trim();
-        if (!StringUtils.isNullOrEmpty(url)) {
-            if (!url.endsWith("/")) {
-                url = url + "/";
-            }
+    private void onRadioGroupChecked(int checkedId) {
+        if (checkedId == R.id.rbLuciRpc) {
+            llUsername.setVisibility(View.VISIBLE);
+            llPassword.setVisibility(View.VISIBLE);
+            llAuthToken.setVisibility(View.GONE);
+        } else if (checkedId == R.id.rbRestfulApi) {
+            llUsername.setVisibility(View.GONE);
+            llPassword.setVisibility(View.GONE);
+            llAuthToken.setVisibility(View.VISIBLE);
         }
-        return new ServerConfig(url, secret);
     }
 
     private boolean checkServerConfig(ServerConfig serverConfig) {
-        String url = serverConfig.getUrl();
-        if (StringUtils.isNullOrEmpty(url)) {
+        String serverUrl = serverConfig.getServerUrl();
+        if (StringUtils.isNullOrBlank(serverUrl)) {
             ToastUtils.show(getApplicationContext(), "路由器接口地址不能为空！");
-            etUrl.requestFocus();
+            etServerUrl.requestFocus();
             return false;
         }
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        if (!serverUrl.startsWith("http://") && !serverUrl.startsWith("https://")) {
             ToastUtils.show(getApplicationContext(), "URL地址必须以http(s)://开头！");
-            etUrl.requestFocus();
+            etServerUrl.requestFocus();
             return false;
         }
-        String secret = serverConfig.getSecret();
-        if (StringUtils.isNullOrEmpty(secret)) {
-            ToastUtils.show(getApplicationContext(), "接口密码不能为空！");
-            etSecret.requestFocus();
+
+        String networkInterface = serverConfig.getNetworkInterface();
+        if (StringUtils.isNullOrBlank(networkInterface)) {
+            ToastUtils.show(getApplicationContext(), "路由器接口不能为空！");
+            etNetworkInterface.requestFocus();
             return false;
         }
         return true;
     }
 
-    private void saveServerConfig(ServerConfig serverConfig) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("config_url", serverConfig.getUrl());
-        editor.putString("config_secret", serverConfig.getSecret());
-        editor.apply();
-        ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
+    /**
+     * 从窗体获取服务端配置
+     *
+     * @return 服务端配置
+     */
+    private ServerConfig getServerConfig() {
+        ServerConfig serverConfig = new ServerConfig();
+        serverConfig.setServerUrl(etServerUrl.getText().toString().trim());
+        serverConfig.setNetworkInterface(etNetworkInterface.getText().toString().trim());
+        serverConfig.setUsername(etUsername.getText().toString().trim());
+        serverConfig.setPassword(etPassword.getText().toString().trim());
+        serverConfig.setAuthToken(etAuthToken.getText().toString().trim());
+        if (R.id.rbLuciRpc == rgServerType.getCheckedRadioButtonId()) {
+            serverConfig.setServerType(SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC);
+        } else {
+            serverConfig.setServerType(SystemConstants.CONFIG_SERVER_TYPE_RESTFUL_API);
+        }
+        return serverConfig;
+    }
 
+    /**
+     * 向窗体设置服务端配置
+     *
+     * @param serverConfig 服务端配置
+     */
+    private void setServerConfig(ServerConfig serverConfig) {
+        this.etServerUrl.setText(serverConfig.getServerUrl());
+        this.etNetworkInterface.setText(serverConfig.getNetworkInterface());
+        this.etUsername.setText(serverConfig.getUsername());
+        this.etPassword.setText(serverConfig.getPassword());
+        this.etAuthToken.setText(serverConfig.getAuthToken());
+        if (SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC.equals(serverConfig.getServerType())) {
+            this.onRadioGroupChecked(R.id.rbLuciRpc);
+            this.rgServerType.check(R.id.rbLuciRpc);
+        } else {
+            this.onRadioGroupChecked(R.id.rbRestfulApi);
+            this.rgServerType.check(R.id.rbRestfulApi);
+        }
+    }
+
+    /**
+     * 保存服务端配置至配置文件
+     *
+     * @param serverConfig 服务端配置
+     */
+    private void saveServerConfig(ServerConfig serverConfig) {
+        ConfigUtils.saveServerConfig(getApplicationContext(), serverConfig);
+        ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
         checkPermission();
         this.finish();
     }
@@ -157,10 +226,22 @@ public class ConfigActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        this.etUrl = this.findViewById(R.id.etUrl);
-        this.etSecret = this.findViewById(R.id.etSecret);
-        etUrl.setText(sharedPreferences.getString("config_url", ""));
-        etSecret.setText(sharedPreferences.getString("config_secret", ""));
+        this.etServerUrl = this.findViewById(R.id.etServerUrl);
+        this.etNetworkInterface = this.findViewById(R.id.etNetworkInterface);
+        this.etUsername = this.findViewById(R.id.etUsername);
+        this.etPassword = this.findViewById(R.id.etPassword);
+        this.etAuthToken = this.findViewById(R.id.etAuthToken);
+        this.rgServerType = this.findViewById(R.id.rgServerType);
+        this.llUsername = this.findViewById(R.id.llUsername);
+        this.llPassword = this.findViewById(R.id.llPassword);
+        this.llAuthToken = this.findViewById(R.id.llAuthToken);
+
+        rgServerType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                onRadioGroupChecked(checkedId);
+            }
+        });
     }
 
 }

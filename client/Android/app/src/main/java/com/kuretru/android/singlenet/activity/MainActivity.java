@@ -13,11 +13,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kuretru.android.singlenet.R;
-import com.kuretru.android.singlenet.api.ApiManager;
-import com.kuretru.android.singlenet.entity.ApiResponse;
+import com.kuretru.android.singlenet.api.service.SinglenetApiService;
+import com.kuretru.android.singlenet.entity.InterfaceStatusEnum;
+import com.kuretru.android.singlenet.entity.NetworkOption;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.SystemLog;
-import com.kuretru.android.singlenet.entity.WanOption;
+import com.kuretru.android.singlenet.exception.ApiServiceException;
+import com.kuretru.android.singlenet.factory.SinglenetApiServiceFactory;
 import com.kuretru.android.singlenet.service.AlarmService;
 import com.kuretru.android.singlenet.service.SmsService;
 import com.kuretru.android.singlenet.util.ConfigUtils;
@@ -28,10 +30,6 @@ import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Context context;
     private ServerConfig serverConfig = null;
-    private ApiManager apiManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadServerConfig();
-        if (serverConfig != null) {
-            apiManager = new ApiManager(serverConfig);
-            //apiManager.ping(this.getApplicationContext());
-        }
         loadAlarmStatus();
         loadLog();
     }
@@ -97,29 +90,29 @@ public class MainActivity extends AppCompatActivity {
     public void btnUpdate_onClick(View view) {
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-        if (StringUtils.isNullOrEmpty(password)) {
+        if (StringUtils.isNullOrBlank(password)) {
             ToastUtils.show(context, "密码是必填项！");
             return;
         }
-        WanOption wanOption = new WanOption(username, password);
-        Call<ApiResponse<WanOption>> call = apiManager.setWanOption(wanOption);
-        call.enqueue(new Callback<ApiResponse<WanOption>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<WanOption>> call, Response<ApiResponse<WanOption>> response) {
-                if (response.isSuccessful()) {
+        NetworkOption networkOption = new NetworkOption(username, password);
+        new Thread(() -> {
+            try {
+                SinglenetApiService apiService = SinglenetApiServiceFactory.build(serverConfig);
+                apiService.setNetworkOption(networkOption);
+                runOnUiThread(() -> {
                     String message = StringUtils.isNullOrEmpty(username) ? "" : "用户名及";
                     ToastUtils.show(context, "更新" + message + "密码成功！");
-                    return;
+                });
+                InterfaceStatusEnum status = apiService.getInterfaceStatus();
+                if (status == InterfaceStatusEnum.DOWN) {
+                    apiService.setInterfaceUp();
                 }
-                ApiResponse<String> errorResponse = StringUtils.getErrorResponse(response.errorBody());
-                ToastUtils.show(context, errorResponse.getData());
+            } catch (ApiServiceException e) {
+                runOnUiThread(() -> {
+                    ToastUtils.show(getApplicationContext(), "更新失败，" + e.getMessage());
+                });
             }
-
-            @Override
-            public void onFailure(Call<ApiResponse<WanOption>> call, Throwable t) {
-                ToastUtils.show(context, "连接失败：" + t.getMessage());
-            }
-        });
+        }).start();
     }
 
     private void initView() {
@@ -135,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadServerConfig() {
         ServerConfig serverConfig = ConfigUtils.loadServerConfig(this.getApplicationContext());
-        if (StringUtils.isNullOrEmpty(serverConfig.getUrl()) || StringUtils.isNullOrEmpty(serverConfig.getSecret())) {
+        if (StringUtils.isNullOrEmpty(serverConfig.getServerUrl()) || StringUtils.isNullOrEmpty(serverConfig.getNetworkInterface())) {
             btnSend.setEnabled(false);
             btnAlarm.setEnabled(false);
             btnCancel.setEnabled(false);

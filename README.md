@@ -12,7 +12,7 @@
   * [X] Android客户端
   * [ ] iOS客户端
 * 项目地址
-  * [闪讯机器人](https://github.com/kuretru/SingleNet-Robot)，支持Android 9.0版本
+  * [闪讯机器人](https://github.com/kuretru/SingleNet-Robot)，支持Android 9.0+版本
   * ~~[闪讯密码获取器](https://github.com/kuretru/SingleNet-Password)~~，Android 4.4版本稳定运行，已合并旧项目至本仓库，参考1.0版本
 * 系统需求
   * 一个已经刷好OpenWrt系统的路由器

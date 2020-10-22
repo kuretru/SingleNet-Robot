@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.kuretru.android.singlenet.api.service.SinglenetApiService;
@@ -50,7 +51,9 @@ public class SinglenetService extends IntentService {
     }
 
     private void toastShow(String message) {
-        new Handler().post(() -> ToastUtils.show(SinglenetService.this, message));
+        new Handler(Looper.getMainLooper()).post(() -> {
+            ToastUtils.show(SinglenetService.this, message);
+        });
         Log.d(StringUtils.DEBUG_TAG, "SinglenetService: " + message);
         SystemLog systemLog = new SystemLog();
         systemLog.setTime(StringUtils.timestampToString(System.currentTimeMillis()));

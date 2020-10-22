@@ -138,8 +138,8 @@ public class ConfigActivity extends AppCompatActivity {
             etServerUrl.requestFocus();
             return false;
         }
-        if (!serverUrl.endsWith("/")) {
-            ToastUtils.show(getApplicationContext(), "URL地址结尾不能含有！");
+        if (serverUrl.endsWith("/")) {
+            ToastUtils.show(getApplicationContext(), "URL地址结尾不能含有/！");
             etServerUrl.requestFocus();
             return false;
         }

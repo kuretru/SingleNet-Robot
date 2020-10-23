@@ -5,7 +5,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import json
 import subprocess
-import io
 import time
 
 PORT = 8079  # 闪讯机器人API服务器监听端口
@@ -24,10 +23,12 @@ def get_network_option(network_interface: str):
 
 
 def set_network_option(network_interface: str, username: str, password: str):
-    run_subprocess(['uci', 'set', 'network.{}.username={}'.format(network_interface, username)])
-    run_subprocess(['uci', 'set', 'network.{}.password={}'.format(network_interface, password)])
+    if username is not None and len(username) > 0:
+        run_subprocess(['uci', 'set', 'network.{}.username={}'.format(network_interface, username)])
+    if password is not None and len(password) > 0:
+        run_subprocess(['uci', 'set', 'network.{}.password={}'.format(network_interface, password)])
     run_subprocess(['uci', 'commit', 'network.{}'.format(network_interface)])
-    return success_response(network_interface)
+    return get_network_option(network_interface)
 
 
 def get_interface_status(network_interface: str):
@@ -36,8 +37,8 @@ def get_interface_status(network_interface: str):
 
 
 def set_interface_up(network_interface: str):
-    result = run_subprocess(['/sbin/ifdown', network_interface, '&&', '/sbin/ifup', network_interface])
-    return success_response(json.loads(result))
+    run_subprocess(['/sbin/ifdown', network_interface, '&&', '/sbin/ifup', network_interface])
+    return get_interface_status(network_interface)
 
 
 def success_response(data):
@@ -50,8 +51,8 @@ def build_response(code: int, message: str, data, status_code=200):
 
 
 def run_subprocess(args):
-    result = subprocess.run(args, check=True, stdout=subprocess.PIPE).stdout
-    return result.decode().replace('\n', '').strip()
+    output = subprocess.run(args, capture_output=True, check=True)
+    return output.stdout.decode().replace('\n', '').strip()
 
 
 class SingleNetRequestHandler(BaseHTTPRequestHandler):
@@ -64,9 +65,17 @@ class SingleNetRequestHandler(BaseHTTPRequestHandler):
         params = parse_qs(urlparse(self.path).query)
         return get_network_option(params['interface'][0])
 
+    def set_network_option(self):
+        data = self._get_request_body()
+        return set_network_option(data['interface'], data['username'], data['password'])
+
     def get_interface_status(self):
         params = parse_qs(urlparse(self.path).query)
         return get_interface_status(params['interface'][0])
+
+    def set_interface_up(self):
+        data = self._get_request_body()
+        return set_interface_up(data['interface'])
 
     def _prepare_request(self, method: str):
         """预处理HTTP Request"""
@@ -78,11 +87,20 @@ class SingleNetRequestHandler(BaseHTTPRequestHandler):
         for route in SingleNetRequestHandler.routes:
             path = urlparse(self.path).path
             if path == route['path'] and method == route['method']:
-                self._handle_request(route['handler'])
+                try:
+                    self._handle_request(route['handler'])
+                except subprocess.CalledProcessError as e:
+                    output = e.stderr.decode().replace('\n', '').strip()
+                    self._prepare_response(build_response(10400, 'user request error', '命令执行出错：' + output, 500))
         self._prepare_response(build_response(10400, 'user request error', '不存在该路由', 404))
 
     def _handle_request(self, handler):
         self._prepare_response(handler(self))
+
+    def _get_request_body(self):
+        content_length = int(self.headers.get('Content-Length'))
+        request_body = self.rfile.read(content_length).decode()
+        return json.loads(request_body)
 
     def _prepare_response(self, data: dict):
         """封装HTTP Response Body"""
@@ -134,7 +152,9 @@ if __name__ == '__main__':
     SingleNetRequestHandler.routes = [
         {'path': '/api/ping', 'method': 'GET', 'handler': SingleNetRequestHandler.ping},
         {'path': '/api/network/option', 'method': 'GET', 'handler': SingleNetRequestHandler.get_network_option},
-        {'path': '/api/network/status', 'method': 'GET', 'handler': SingleNetRequestHandler.get_interface_status}
+        {'path': '/api/network/option', 'method': 'POST', 'handler': SingleNetRequestHandler.set_network_option},
+        {'path': '/api/network/status', 'method': 'GET', 'handler': SingleNetRequestHandler.get_interface_status},
+        {'path': '/api/network/status', 'method': 'POST', 'handler': SingleNetRequestHandler.set_interface_up}
     ]
     httpd = HTTPServer(('0.0.0.0', PORT), SingleNetRequestHandler)
     print('Starting SingleNet Robot RESTful API Server at port %d' % PORT)

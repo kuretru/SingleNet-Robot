@@ -81,9 +81,11 @@ class SingleNetRequestHandler(BaseHTTPRequestHandler):
         """预处理HTTP Request"""
         if 'Access-Token' not in self.headers:
             self._prepare_response(build_response(10200, 'user authentication failed', '请求头未携带Access-Token', 401))
+            return
         access_token = self.headers['Access-Token']
         if not self._valid_access_token(access_token):
             self._prepare_response(build_response(10200, 'user authentication failed', 'Access-Token错误', 401))
+            return
         for route in SingleNetRequestHandler.routes:
             path = urlparse(self.path).path
             if path == route['path'] and method == route['method']:
@@ -92,6 +94,7 @@ class SingleNetRequestHandler(BaseHTTPRequestHandler):
                 except subprocess.CalledProcessError as e:
                     output = e.stderr.decode().replace('\n', '').strip()
                     self._prepare_response(build_response(10400, 'user request error', '命令执行出错：' + output, 500))
+                return
         self._prepare_response(build_response(10400, 'user request error', '不存在该路由', 404))
 
     def _handle_request(self, handler):

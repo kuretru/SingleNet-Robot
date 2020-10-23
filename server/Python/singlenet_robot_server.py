@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+"""
+SingleNet Robot Python3 Server
+Version: 3.0
+Author: Eugene Wu <kuretru@gmail.com>
+URL: https://github.com/kuretru/SingleNet-Robot
+"""
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import json

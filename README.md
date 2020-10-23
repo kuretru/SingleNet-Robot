@@ -7,7 +7,7 @@
 
 * 项目完成情况
   * [ ] Go服务端
-  * [x] Python服务端
+  * [x] Python服务端(2.x, 3.x)
   * [x] LuCI RPC服务端(推荐)
   * [X] Android客户端
   * [ ] iOS客户端
@@ -42,11 +42,11 @@ Python服务端依赖于Python适用于软路由或大闪存的路由器。
 1. 在路由器上下载服务端文件，或通过电脑上传
 
 ```bash
-wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Python/run.py -O singlenet_robot_server.py`
+wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Python/singlenet_robot_server.py -O singlenet_robot_server.py`
 ```
 
-2. 修改`INTERFACE`字段为闪讯拨号的接口名(一般不用修改)
-3. 修改通信密钥`SECRET`字段为你喜欢的任意字符串，防止他人修改你的密码
+2. (可选)修改`PORT`字段为你喜欢的端口
+3. (可选)修改通信密钥`SECRET`字段为你喜欢的任意字符串，防止他人恶意调用APi服务
 4. 设置开机自动启动
    1. 打开OpenWrt LuCI -> `系统` -> `启动脚本` -> `本地启动脚本`
    2. 于`exit 0`前追加
@@ -62,9 +62,9 @@ wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Pyt
 1. 去项目仓库下载编译好的apk文件，并安装至手机
 2. 点击`服务器配置`，输入服务端地址及服务端网络接口名称，一个正确的服务端地址是类似于这样的：`http://192.168.1.1:8079`
 3. 根据服务端类型，配置用户名密码或通讯密钥
-3. 点击`测试服务器`，若成功点击`保存并退出`，若失败请仔细检查服务端地址是否设置正确或服务端是否开启
-4. 在`调试面板`输入当前的闪讯账号及密码，并点击`手动更新用户名及密码`查看是否自动更新成功
-5. 点击`注册定时任务`以开启自动更新密码功能
+4. 点击`测试服务器`，若成功点击`保存并退出`，若失败请仔细检查服务端地址是否设置正确或服务端是否开启
+5. 在`调试面板`输入当前的闪讯账号及密码，并点击`手动更新用户名及密码`查看是否自动更新成功
+6. 点击`注册定时任务`以开启自动更新密码功能
 
 ## 疑难杂症解决
 
@@ -73,7 +73,7 @@ wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Pyt
 2. 问：为什么断网以后无法更新密码了？
    答：关闭手机的“无线网络不佳时使用流量”功能。
 3. 问：总是连接失败怎么办？如何调试？
-   答：直接使用浏览器访问`/wan_option`，例如`http://192.168.1.1:8079/wan_option`，若成功，可以观察到返回了当前使用的密码，则将`http://192.168.1.1:8079/`填入手机客户端，即可成功连接。
+   答：直接使用浏览器访问`/api/ping`，例如`http://192.168.1.1:8079/api/ping`，若显示`请求头未携带Access-Token`，则说明服务端运行正常，应将`http://192.168.1.1:8079`作为服务器地址填入手机客户端，即可成功连接。
 4. 问：我还有其他问题怎么办？
    答：既然你已经找到这了，相信聪明的你一定可以解决，如果发现了软件的bug，可以去代码仓库发起issue。
 

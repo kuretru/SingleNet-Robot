@@ -100,7 +100,7 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
     @Override
     public InterfaceStatusEnum setInterfaceUp() throws ApiServiceException {
         LuciRpcResponse response = RetrofitUtils.syncExecute(manager.setInterfaceUp());
-        if (!"true".equalsIgnoreCase(response.getResult())) {
+        if (!StringUtils.isNullOrBlank(response.getResult())) {
             throw new ApiServiceException("重启网络端接口失败：" + response.getResult());
         }
         return getInterfaceStatus();

@@ -32,6 +32,7 @@
     <string name="main_alarm">注册定时任务</string>
     <string name="main_cancel">取消定时任务</string>
     <string name="main_update">手动更新用户名及密码</string>
+    <string name="main_clear_log">清空日志</string>
     <string name="main_panel_config">配置面板</string>
     <string name="main_panel_primary">主面板</string>
     <string name="main_panel_debug">调试面板</string>

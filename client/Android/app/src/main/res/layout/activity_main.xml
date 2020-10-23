@@ -84,6 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_panel_config" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -121,6 +122,7 @@
                     android:ems="10"
                     android:hint="@string/singlenet_username_hint"
                     android:inputType="textEmailAddress" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -152,6 +154,7 @@
                 android:layout_weight="1"
                 android:onClick="btnUpdate_onClick"
                 android:text="@string/main_update" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -167,6 +170,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/main_panel_log" />
+
+            <Button
+                android:id="@+id/btnClearLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="btnClearLog_onClick"
+                android:text="@string/main_clear_log" />
+
         </LinearLayout>
 
         <ListView

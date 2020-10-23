@@ -119,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void btnClearLog_onClick(View view) {
+        LitePal.deleteAll(SystemLog.class);
+        loadLog();
+    }
+
     private void initView() {
         this.btnSend = findViewById(R.id.btnSend);
         this.btnAlarm = findViewById(R.id.btnAlarm);

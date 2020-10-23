@@ -1,5 +1,6 @@
 package com.kuretru.android.singlenet.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             ToastUtils.show(context, "密码是必填项！");
             return;
         }
+        ProgressDialog progressDialog = ProgressDialog.show(this, "提示", "更新中");
         NetworkOption networkOption = new NetworkOption(username, password);
         new Thread(() -> {
             try {
@@ -109,8 +111,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             } catch (ApiServiceException e) {
                 runOnUiThread(() -> {
-                    ToastUtils.show(getApplicationContext(), "更新失败，" + e.getMessage());
+                    ToastUtils.show(getApplicationContext(), "更新失败：" + e.getMessage());
                 });
+            } finally {
+                progressDialog.cancel();
             }
         }).start();
     }

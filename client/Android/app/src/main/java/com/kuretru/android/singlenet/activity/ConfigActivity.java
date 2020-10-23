@@ -80,7 +80,9 @@ public class ConfigActivity extends AppCompatActivity {
                 SinglenetApiService apiService = SinglenetApiServiceFactory.build(serverConfig);
                 apiService.ping();
                 closeProgressDialog(true);
-                runOnUiThread(() -> ToastUtils.show(getApplicationContext(), "与服务器通讯成功！"));
+                runOnUiThread(() -> {
+                    ToastUtils.show(getApplicationContext(), "与服务器通讯成功！");
+                });
             } catch (ApiServiceException e) {
                 closeProgressDialog(false);
                 runOnUiThread(() -> {

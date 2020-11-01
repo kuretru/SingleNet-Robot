@@ -41,6 +41,7 @@ public class ConfigActivity extends AppCompatActivity {
     private EditText etUsername;
     private EditText etPassword;
     private EditText etAuthToken;
+    private RadioGroup rgVerifySsl;
     private RadioGroup rgServerType;
     private LinearLayout llUsername;
     private LinearLayout llPassword;
@@ -176,6 +177,11 @@ public class ConfigActivity extends AppCompatActivity {
     private ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setServerUrl(etServerUrl.getText().toString().trim());
+        if (R.id.rbVerifySsl == rgVerifySsl.getCheckedRadioButtonId()) {
+            serverConfig.setVerifySsl(SystemConstants.CONFIG_VERIFY);
+        } else {
+            serverConfig.setVerifySsl(SystemConstants.CONFIG_IGNORE);
+        }
         serverConfig.setNetworkInterface(etNetworkInterface.getText().toString().trim());
         serverConfig.setUsername(etUsername.getText().toString().trim());
         serverConfig.setPassword(etPassword.getText().toString().trim());
@@ -195,6 +201,11 @@ public class ConfigActivity extends AppCompatActivity {
      */
     private void setServerConfig(ServerConfig serverConfig) {
         this.etServerUrl.setText(serverConfig.getServerUrl());
+        if (SystemConstants.CONFIG_VERIFY.equals(serverConfig.getVerifySsl())) {
+            this.rgVerifySsl.check(R.id.rbVerifySsl);
+        } else {
+            this.rgVerifySsl.check(R.id.rbIgnoreSsl);
+        }
         this.etNetworkInterface.setText(serverConfig.getNetworkInterface());
         this.etUsername.setText(serverConfig.getUsername());
         this.etPassword.setText(serverConfig.getPassword());
@@ -228,7 +239,7 @@ public class ConfigActivity extends AppCompatActivity {
             }
         }
         if (permissions.size() > 0) {
-            ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), 1);
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), 1);
         }
     }
 
@@ -243,6 +254,7 @@ public class ConfigActivity extends AppCompatActivity {
         this.etUsername = this.findViewById(R.id.etUsername);
         this.etPassword = this.findViewById(R.id.etPassword);
         this.etAuthToken = this.findViewById(R.id.etAuthToken);
+        this.rgVerifySsl = this.findViewById(R.id.rgVerifySsl);
         this.rgServerType = this.findViewById(R.id.rgServerType);
         this.llUsername = this.findViewById(R.id.llUsername);
         this.llPassword = this.findViewById(R.id.llPassword);

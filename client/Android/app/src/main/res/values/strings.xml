@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">闪讯机器人</string>
     <string name="exception_exit">出现错误，请重新打开App</string>
+    <string name="verify">验证</string>
+    <string name="ignore">忽略</string>
 
     <string name="config_server_url">　服务器地址：</string>
     <string name="config_server_url_hint">e.g. http://192.168.1.1:8079/</string>
 
-    <string name="config_network_interface">　　网络接口：</string>
+    <string name="config_verify_ssl">　验证SSL证书：</string>
+
+    <string name="config_network_interface">　网络接口：</string>
     <string name="config_network_interface_hint">e.g. wan</string>
     <string name="config_network_interface_text">wan</string>
 
@@ -13,7 +17,7 @@
     <string name="config_server_type_luci_rpc">Luci RPC</string>
     <string name="config_server_type_restful_api">RESTful API</string>
 
-    <string name="config_username">路由器用户名：</string>
+    <string name="config_username">　路由器用户名：</string>
     <string name="config_username_hint">e.g. root</string>
     <string name="config_username_text">root</string>
 

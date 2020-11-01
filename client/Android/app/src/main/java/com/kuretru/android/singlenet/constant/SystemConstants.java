@@ -4,6 +4,12 @@ public class SystemConstants {
 
     public static final String CONFIG_SERVER_URL = "config_server_url";
 
+    public static final String CONFIG_VERIFY_SSL = "config_verify_ssl";
+
+    public static final String CONFIG_VERIFY = "verify";
+
+    public static final String CONFIG_IGNORE = "ignore";
+
     public static final String CONFIG_NETWORK_INTERFACE = "config_network_interface";
 
     public static final String CONFIG_SERVER_TYPE = "config_server_type";

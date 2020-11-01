@@ -20,6 +20,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setServerUrl(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_URL, ""));
+        serverConfig.setServerUrl(sharedPreferences.getString(SystemConstants.CONFIG_VERIFY_SSL, "verify"));
         serverConfig.setNetworkInterface(sharedPreferences.getString(SystemConstants.CONFIG_NETWORK_INTERFACE, "wan"));
         serverConfig.setServerType(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_TYPE, SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC));
         serverConfig.setUsername(sharedPreferences.getString(SystemConstants.CONFIG_USERNAME, "root"));
@@ -38,6 +39,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SystemConstants.CONFIG_SERVER_URL, serverConfig.getServerUrl());
+        editor.putString(SystemConstants.CONFIG_VERIFY_SSL, serverConfig.getVerifySsl());
         editor.putString(SystemConstants.CONFIG_NETWORK_INTERFACE, serverConfig.getNetworkInterface());
         editor.putString(SystemConstants.CONFIG_SERVER_TYPE, serverConfig.getServerType());
         editor.putString(SystemConstants.CONFIG_USERNAME, serverConfig.getUsername());
@@ -55,6 +57,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(SystemConstants.CONFIG_SERVER_URL);
+        editor.remove(SystemConstants.CONFIG_VERIFY_SSL);
         editor.remove(SystemConstants.CONFIG_NETWORK_INTERFACE);
         editor.remove(SystemConstants.CONFIG_SERVER_TYPE);
         editor.remove(SystemConstants.CONFIG_USERNAME);

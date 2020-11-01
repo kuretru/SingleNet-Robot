@@ -38,6 +38,44 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvVerifySsl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_verify_ssl" />
+
+            <RadioGroup
+                android:id="@+id/rgVerifySsl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:checkedButton="@id/rbVerifySsl"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbVerifySsl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/verify" />
+
+                <RadioButton
+                    android:id="@+id/rbIgnoreSsl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/ignore" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/border"
             android:paddingBottom="20dp"
             android:layout_gravity="center"

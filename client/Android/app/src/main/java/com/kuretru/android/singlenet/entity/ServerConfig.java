@@ -12,6 +12,11 @@ public class ServerConfig {
     private String serverUrl;
 
     /**
+     * 忽略SSL证书验证
+     */
+    private String verifySsl;
+
+    /**
      * 网络接口名称(OpenWrt默认值为'wan')
      */
     private String networkInterface;

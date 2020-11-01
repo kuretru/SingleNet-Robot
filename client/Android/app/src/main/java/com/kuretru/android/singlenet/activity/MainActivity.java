@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -12,9 +13,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.kuretru.android.singlenet.R;
 import com.kuretru.android.singlenet.api.service.SinglenetApiService;
+import com.kuretru.android.singlenet.constant.SystemConstants;
 import com.kuretru.android.singlenet.entity.InterfaceStatusEnum;
 import com.kuretru.android.singlenet.entity.NetworkOption;
 import com.kuretru.android.singlenet.entity.ServerConfig;
@@ -22,17 +31,22 @@ import com.kuretru.android.singlenet.entity.SystemLog;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.factory.SinglenetApiServiceFactory;
 import com.kuretru.android.singlenet.service.AlarmService;
-import com.kuretru.android.singlenet.service.SmsService;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
+import com.kuretru.android.singlenet.worker.SendSmsWorker;
 
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "KT_MainActivity";
 
     private Button btnSend;
     private Button btnAlarm;
@@ -59,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadServerConfig();
-        loadAlarmStatus();
+        loadWorkStatus();
         loadLog();
     }
 
@@ -69,22 +83,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnSend_onClick(View view) {
-        Intent intent = new Intent(this, SmsService.class);
-        this.startService(intent);
-        ToastUtils.show(context, "获取密码短信发送成功！");
+        WorkRequest workRequest = OneTimeWorkRequest.from(SendSmsWorker.class);
+        WorkManager.getInstance(this).enqueue(workRequest);
+        ToastUtils.show(context, "获取闪讯密码短信发送成功！");
     }
 
     public void btnAlarm_onClick(View view) {
-        AlarmService alarmService = new AlarmService(context);
-        alarmService.register();
-        loadAlarmStatus();
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest
+                .Builder(SendSmsWorker.class, 15, TimeUnit.MINUTES)
+                .setInitialDelay(1, TimeUnit.MINUTES)
+                .build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                SystemConstants.SINGLENET_WORKER_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest);
+        loadWorkStatus();
         ToastUtils.show(context, "注册定时任务成功！");
     }
 
     public void btnCancel_onClick(View view) {
-        AlarmService alarmService = new AlarmService(context);
-        alarmService.cancel();
-        loadAlarmStatus();
+        WorkManager.getInstance(this).cancelUniqueWork(SystemConstants.SINGLENET_WORKER_NAME);
+        loadWorkStatus();
         ToastUtils.show(context, "取消定时任务成功！");
     }
 
@@ -160,6 +179,35 @@ public class MainActivity extends AppCompatActivity {
             tvAlarm.setText(("下一次任务时间：" + StringUtils.timestampToString(nextTime)));
         } else {
             tvAlarm.setText("定时任务未注册！！");
+        }
+    }
+
+    private void loadWorkStatus() {
+        ListenableFuture<List<WorkInfo>> works = WorkManager.getInstance(this)
+                .getWorkInfosForUniqueWork(SystemConstants.SINGLENET_WORKER_NAME);
+        try {
+            List<WorkInfo> worksInfo = works.get();
+            if (worksInfo.isEmpty()) {
+                tvAlarm.setText("定时任务未注册！");
+                return;
+            }
+            WorkInfo work = worksInfo.get(0);
+            switch (work.getState()) {
+                case ENQUEUED:
+                    tvAlarm.setText("定时任务已启用！");
+                    break;
+                case RUNNING:
+                    tvAlarm.setText("定时任务正在运行！");
+                    break;
+                case CANCELLED:
+                    tvAlarm.setText("定时任务已取消！");
+                    break;
+                default:
+                    tvAlarm.setText("定时任务状态未知！");
+                    break;
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(TAG, "查询定时任务状态错误：" + e.getMessage());
         }
     }
 

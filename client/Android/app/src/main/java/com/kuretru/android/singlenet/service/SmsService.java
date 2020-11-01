@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.telephony.SmsManager;
 
+@Deprecated
 public class SmsService extends IntentService {
 
     private static final String SINGLENET_MOBILE = "1065930051";

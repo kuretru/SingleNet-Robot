@@ -2,6 +2,8 @@ package com.kuretru.android.singlenet.constant;
 
 public class SystemConstants {
 
+    public static final String SINGLENET_WORKER_NAME = "singlenet";
+
     public static final String CONFIG_SERVER_URL = "config_server_url";
 
     public static final String CONFIG_VERIFY_SSL = "config_verify_ssl";

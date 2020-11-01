@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 import com.kuretru.android.singlenet.service.SinglenetService;
 import com.kuretru.android.singlenet.util.ToastUtils;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class SmsReceiver extends BroadcastReceiver {
 
+    private static final String TAG = "KT_SmsReceiver";
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     private static final String SINGLENET_MOBILE = "106593005";
 
@@ -24,23 +26,27 @@ public class SmsReceiver extends BroadcastReceiver {
             return;
         }
         SmsMessage[] messages = getMessagesFromIntent(intent);
-        if (messages != null && messages.length > 0) {
-            for (SmsMessage message : messages) {
-                if (SINGLENET_MOBILE.equals(message.getDisplayOriginatingAddress())) {
-                    String body = message.getDisplayMessageBody();
-                    Pattern pattern = Pattern.compile("[0-9]{6}");
-                    Matcher matcher = pattern.matcher(body);
-                    if (matcher.find()) {
-                        String code = matcher.group(0);
-                        Intent singlenetIntent = new Intent(context, SinglenetService.class);
-                        singlenetIntent.putExtra("code", code);
-                        context.startService(singlenetIntent);
-                        ToastUtils.show(context, "获取到闪讯密码：" + code);
-                        break;
-                    }
-                }
+        for (SmsMessage message : messages) {
+            if (!SINGLENET_MOBILE.equals(message.getDisplayOriginatingAddress())) {
+                continue;
+            }
+            String body = message.getDisplayMessageBody();
+            Pattern pattern = Pattern.compile("[0-9]{6}");
+            Matcher matcher = pattern.matcher(body);
+            if (matcher.find()) {
+                String code = matcher.group(0);
+                doWork(context, code);
+                break;
             }
         }
+    }
+
+    private void doWork(Context context, String code) {
+        Log.i(TAG, "接收到闪讯密码短信：" + code);
+        Intent singlenetIntent = new Intent(context, SinglenetService.class);
+        singlenetIntent.putExtra("code", code);
+        context.startService(singlenetIntent);
+        ToastUtils.show(context, "获取到闪讯密码：" + code);
     }
 
     private SmsMessage[] getMessagesFromIntent(Intent intent) {

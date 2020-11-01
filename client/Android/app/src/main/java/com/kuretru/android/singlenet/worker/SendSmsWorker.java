@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters;
 
 public class SendSmsWorker extends Worker {
 
-    private static final String TAG = "SendSmsWorker";
+    private static final String TAG = "KT_SendSmsWorker";
     private static final String SINGLENET_MOBILE = "1065930051";
     private static final String SINGLENET_MESSAGE = "MM";
 

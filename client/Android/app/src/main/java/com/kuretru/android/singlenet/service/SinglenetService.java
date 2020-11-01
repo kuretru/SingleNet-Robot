@@ -20,15 +20,17 @@ import com.kuretru.android.singlenet.util.ToastUtils;
 
 public class SinglenetService extends IntentService {
 
+    private static final String TAG = "KT_SinglenetService";
+
     public SinglenetService() {
-        super("SinglenetApi");
+        super("SinglenetService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
         String code = bundle.getString("code");
-        Log.d(StringUtils.DEBUG_TAG, "SinglenetService: 获取到闪讯密码：" + code);
+        Log.d(TAG, "获取到闪讯密码：" + code);
         NetworkOption networkOption = new NetworkOption(null, code);
 
         ServerConfig serverConfig = ConfigUtils.loadServerConfig(this);
@@ -54,7 +56,7 @@ public class SinglenetService extends IntentService {
         new Handler(Looper.getMainLooper()).post(() -> {
             ToastUtils.show(SinglenetService.this, message);
         });
-        Log.d(StringUtils.DEBUG_TAG, "SinglenetService: " + message);
+        Log.d(TAG, message);
         SystemLog systemLog = new SystemLog();
         systemLog.setTime(StringUtils.timestampToString(System.currentTimeMillis()));
         systemLog.setMessage(message);

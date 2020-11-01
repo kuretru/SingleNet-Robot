@@ -26,7 +26,7 @@ import retrofit2.Response;
 
 public class RetrofitUtils {
 
-    private static final String TAG = "RetrofitUtils";
+    private static final String TAG = "KT-RetrofitUtils";
 
     /**
      * 同步执行请求

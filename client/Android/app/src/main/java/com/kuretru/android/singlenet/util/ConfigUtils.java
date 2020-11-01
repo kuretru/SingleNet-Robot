@@ -20,7 +20,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setServerUrl(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_URL, ""));
-        serverConfig.setServerUrl(sharedPreferences.getString(SystemConstants.CONFIG_VERIFY_SSL, "verify"));
+        serverConfig.setVerifySsl(sharedPreferences.getString(SystemConstants.CONFIG_VERIFY_SSL, "verify"));
         serverConfig.setNetworkInterface(sharedPreferences.getString(SystemConstants.CONFIG_NETWORK_INTERFACE, "wan"));
         serverConfig.setServerType(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_TYPE, SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC));
         serverConfig.setUsername(sharedPreferences.getString(SystemConstants.CONFIG_USERNAME, "root"));

@@ -9,10 +9,7 @@ import com.kuretru.android.singlenet.factory.LuciRpcRequestFactory;
 import com.kuretru.android.singlenet.util.RetrofitUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -26,16 +23,7 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
     public LuciRpcManagerImpl(ServerConfig serverConfig) throws ApiServiceException {
         this.serverConfig = serverConfig;
 
-        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS);
-        okHttpClient.addInterceptor(chain -> {
-            Request original = chain.request();
-            Request request = original.newBuilder()
-                    .header("Content-Type", "application/json")
-                    .method(original.method(), original.body())
-                    .build();
-            return chain.proceed(request);
-        });
+        OkHttpClient.Builder okHttpClient = RetrofitUtils.okHttpClientBuilder(serverConfig);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverConfig.getServerUrl())

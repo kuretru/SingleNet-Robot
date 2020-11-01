@@ -5,12 +5,11 @@ import com.kuretru.android.singlenet.entity.NetworkOption;
 import com.kuretru.android.singlenet.entity.RestfulApiRequest;
 import com.kuretru.android.singlenet.entity.RestfulApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
+import com.kuretru.android.singlenet.util.RetrofitUtils;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -23,16 +22,7 @@ public class RestfulApiManagerImpl implements RestfulApiManager {
     public RestfulApiManagerImpl(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
 
-        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(3, TimeUnit.SECONDS);
-        okHttpClient.addInterceptor(chain -> {
-            Request original = chain.request();
-            Request request = original.newBuilder()
-                    .header("Content-Type", "application/json")
-                    .method(original.method(), original.body())
-                    .build();
-            return chain.proceed(request);
-        });
+        OkHttpClient.Builder okHttpClient = RetrofitUtils.okHttpClientBuilder(serverConfig);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverConfig.getServerUrl())

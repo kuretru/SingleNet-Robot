@@ -42,7 +42,11 @@ Python服务端依赖于Python适用于软路由或大闪存的路由器。
 1. 在路由器上下载服务端文件，或通过电脑上传
 
 ```bash
-wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Python/singlenet_robot_server.py -O singlenet_robot_server.py`
+# Python 3.x
+wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Python/singlenet_robot_server.py -O singlenet_robot_server.py
+
+# Python2.x
+wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Python/singlenet_robot_server.py2 -O singlenet_robot_server.py
 ```
 
 2. (可选)修改`PORT`字段为你喜欢的端口

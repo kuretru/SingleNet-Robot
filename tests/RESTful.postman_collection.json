@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "8577f827-c2f7-43c0-8286-e49b5b1016d6",
+		"name": "OpenWrt-RESTful",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ping",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostname}}/api/ping",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"api",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_network_option",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostname}}/api/network/option?interface=wan",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"api",
+						"network",
+						"option"
+					],
+					"query": [
+						{
+							"key": "interface",
+							"value": "wan"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set_network_option",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"type": "text",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"interface\": \"wan\",\n    \"username\": \"123@abc.com\",\n    \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/api/network/option",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"api",
+						"network",
+						"option"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_interface_status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"type": "text",
+						"value": "{{accessToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{hostname}}/api/network/status?interface=wan",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"api",
+						"network",
+						"status"
+					],
+					"query": [
+						{
+							"key": "interface",
+							"value": "wan"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set_interface_status",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"type": "text",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"interface\": \"wan\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/api/network/status",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"api",
+						"network",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "292ef42f-18d8-45c5-b672-88dfae0ec98c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0e6f6f24-fdd3-4374-9bac-d6ae98e233b9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9687040d-9adb-451c-9d27-f453852cef74",
+			"key": "hostname",
+			"value": "http://127.0.0.1:8079"
+		},
+		{
+			"id": "9c60c62d-95ec-4dec-a85a-10ef8ffe0b4a",
+			"key": "accessToken",
+			"value": "123456"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

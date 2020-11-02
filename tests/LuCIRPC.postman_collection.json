@@ -1,0 +1,332 @@
+{
+	"info": {
+		"_postman_id": "7f0695fc-a6c4-4592-998e-9fc3b5bc0d6e",
+		"name": "OpenWrt-RPC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"method\": \"login\",\n    \"params\": [\n        \"root\",\n        \"123456\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/auth",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_username",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"method\": \"get\",\n    \"params\": [\n        \"network\",\n        \"wan\",\n        \"username\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/uci?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"uci"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "commit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"method\": \"commit\",\n    \"params\": [\n        \"network\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/uci?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"uci"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"method\": \"get\",\n    \"params\": [\n        \"network\",\n        \"wan\",\n        \"password\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/uci?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"uci"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set_password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"method\": \"set\",\n    \"params\": [\n        \"network\",\n        \"wan\",\n        \"password\",\n        \"123456\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/uci?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"uci"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ifstatus",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 4,\n    \"method\": \"exec\",\n    \"params\": [\n        \"/sbin/ifstatus wan\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/sys?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"sys"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ifup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 4,\n    \"method\": \"exec\",\n    \"params\": [\n        \"/sbin/ifdown wan && /sbin/ifup wan\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostname}}/cgi-bin/luci/rpc/sys?auth={{auth}}",
+					"host": [
+						"{{hostname}}"
+					],
+					"path": [
+						"cgi-bin",
+						"luci",
+						"rpc",
+						"sys"
+					],
+					"query": [
+						{
+							"key": "auth",
+							"value": "{{auth}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "9efffb5a-9e40-41a3-840d-80ce0ace4330",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "8d7e0c85-54b8-41d6-bcee-b8985bca9aa7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "f5110487-d87a-4fb3-b8c4-f485603c14ab",
+			"key": "hostname",
+			"value": "http://192.168.1.1"
+		},
+		{
+			"id": "e2b3e28f-7010-4b23-a44c-96792acbfeff",
+			"key": "auth",
+			"value": "123456"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -101,6 +101,9 @@ class SingleNetRequestHandler(BaseHTTPRequestHandler):
                 except subprocess.CalledProcessError as e:
                     output = e.stderr.decode().replace('\n', '').strip()
                     self._prepare_response(build_response(10400, 'user request error', '命令执行出错：' + output, 500))
+                except Exception as e:
+                    output = e.strerror
+                    self._prepare_response(build_response(10400, 'user request error', '命令执行出错：' + output, 500))
                 return
         self._prepare_response(build_response(10400, 'user request error', '不存在该路由', 404))
 

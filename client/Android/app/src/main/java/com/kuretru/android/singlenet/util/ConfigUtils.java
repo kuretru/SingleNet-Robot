@@ -10,6 +10,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ConfigUtils {
 
+    private static final String SPLITTER = ",";
+
     /**
      * 从配置文件读取服务端配置
      *
@@ -20,6 +22,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setServerUrl(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_URL, ""));
+        serverConfig.setServerUrlHistory(StringUtils.stringToList(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_URL_HISTORY, ""), SPLITTER));
         serverConfig.setVerifySsl(sharedPreferences.getString(SystemConstants.CONFIG_VERIFY_SSL, "verify"));
         serverConfig.setNetworkInterface(sharedPreferences.getString(SystemConstants.CONFIG_NETWORK_INTERFACE, "wan"));
         serverConfig.setServerType(sharedPreferences.getString(SystemConstants.CONFIG_SERVER_TYPE, SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC));
@@ -39,6 +42,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SystemConstants.CONFIG_SERVER_URL, serverConfig.getServerUrl());
+        editor.putString(SystemConstants.CONFIG_SERVER_URL_HISTORY, StringUtils.listToString(serverConfig.getServerUrlHistory(), SPLITTER));
         editor.putString(SystemConstants.CONFIG_VERIFY_SSL, serverConfig.getVerifySsl());
         editor.putString(SystemConstants.CONFIG_NETWORK_INTERFACE, serverConfig.getNetworkInterface());
         editor.putString(SystemConstants.CONFIG_SERVER_TYPE, serverConfig.getServerType());
@@ -57,6 +61,7 @@ public class ConfigUtils {
         SharedPreferences sharedPreferences = context.getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(SystemConstants.CONFIG_SERVER_URL);
+        editor.remove(SystemConstants.CONFIG_SERVER_URL_HISTORY);
         editor.remove(SystemConstants.CONFIG_VERIFY_SSL);
         editor.remove(SystemConstants.CONFIG_NETWORK_INTERFACE);
         editor.remove(SystemConstants.CONFIG_SERVER_TYPE);

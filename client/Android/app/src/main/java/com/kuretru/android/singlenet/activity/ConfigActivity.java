@@ -7,9 +7,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -41,6 +44,7 @@ public class ConfigActivity extends AppCompatActivity {
     private EditText etUsername;
     private EditText etPassword;
     private EditText etAuthToken;
+    private Spinner spinner;
     private RadioGroup rgVerifySsl;
     private RadioGroup rgServerType;
     private LinearLayout llUsername;
@@ -129,6 +133,10 @@ public class ConfigActivity extends AppCompatActivity {
         }
     }
 
+    private void onSpinnerSelected(String serverUrl) {
+        this.etServerUrl.setText(serverUrl);
+    }
+
     private boolean validServerConfig(ServerConfig serverConfig) {
         String serverUrl = serverConfig.getServerUrl();
         if (StringUtils.isNullOrBlank(serverUrl)) {
@@ -191,6 +199,22 @@ public class ConfigActivity extends AppCompatActivity {
         } else {
             serverConfig.setServerType(SystemConstants.CONFIG_SERVER_TYPE_RESTFUL_API);
         }
+
+        List<String> serverUrlHistory = new ArrayList<>();
+        serverUrlHistory.add(serverConfig.getServerUrl());
+        for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+            Object item = spinner.getAdapter().getItem(i);
+            if (!(item instanceof String)) {
+                continue;
+            }
+            String serverUrl = (String) item;
+            if (StringUtils.isNullOrBlank(serverUrl) || serverUrl.equals(serverConfig.getServerUrl())) {
+                continue;
+            }
+            serverUrlHistory.add(serverUrl);
+        }
+        serverConfig.setServerUrlHistory(serverUrlHistory);
+
         return serverConfig;
     }
 
@@ -210,6 +234,9 @@ public class ConfigActivity extends AppCompatActivity {
         this.etUsername.setText(serverConfig.getUsername());
         this.etPassword.setText(serverConfig.getPassword());
         this.etAuthToken.setText(serverConfig.getAuthToken());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
+                R.layout.support_simple_spinner_dropdown_item, serverConfig.getServerUrlHistory());
+        spinner.setAdapter(arrayAdapter);
         if (SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC.equals(serverConfig.getServerType())) {
             this.onRadioGroupChecked(R.id.rbLuciRpc);
             this.rgServerType.check(R.id.rbLuciRpc);
@@ -254,16 +281,24 @@ public class ConfigActivity extends AppCompatActivity {
         this.etUsername = this.findViewById(R.id.etUsername);
         this.etPassword = this.findViewById(R.id.etPassword);
         this.etAuthToken = this.findViewById(R.id.etAuthToken);
+        this.spinner = this.findViewById(R.id.spinner);
         this.rgVerifySsl = this.findViewById(R.id.rgVerifySsl);
         this.rgServerType = this.findViewById(R.id.rgServerType);
         this.llUsername = this.findViewById(R.id.llUsername);
         this.llPassword = this.findViewById(R.id.llPassword);
         this.llAuthToken = this.findViewById(R.id.llAuthToken);
 
-        rgServerType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        this.rgServerType.setOnCheckedChangeListener((group, checkedId) -> {
+            onRadioGroupChecked(checkedId);
+        });
+        this.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                onRadioGroupChecked(checkedId);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                onSpinnerSelected((String) parent.getItemAtPosition(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }

@@ -6,6 +6,8 @@ public class SystemConstants {
 
     public static final String CONFIG_SERVER_URL = "config_server_url";
 
+    public static final String CONFIG_SERVER_URL_HISTORY = "config_server_url_history";
+
     public static final String CONFIG_VERIFY_SSL = "config_verify_ssl";
 
     public static final String CONFIG_VERIFY = "verify";

@@ -1,12 +1,15 @@
 package com.kuretru.android.singlenet.worker;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.telephony.SmsManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import com.kuretru.android.singlenet.receiver.SmsReceiver;
 
 public class SendSmsWorker extends Worker {
 
@@ -16,6 +19,9 @@ public class SendSmsWorker extends Worker {
 
     public SendSmsWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SmsReceiver.ACTION);
+        context.registerReceiver(new SmsReceiver(), filter);
     }
 
     @NonNull

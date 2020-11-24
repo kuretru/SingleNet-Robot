@@ -37,11 +37,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receiver.SmsReceiver">
-            <intent-filter android:priority="742">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
         <receiver android:name=".receiver.AlarmReceiver">
             <intent-filter>
                 <action android:name="com.kuretru.android.singlenet.receiver.AlarmReceiver" />

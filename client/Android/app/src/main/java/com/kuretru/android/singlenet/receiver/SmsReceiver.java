@@ -21,8 +21,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        if (!ACTION.equals(action)) {
+        if (!ACTION.equals(intent.getAction())) {
             return;
         }
         SmsMessage[] messages = getMessagesFromIntent(intent);
@@ -43,10 +42,10 @@ public class SmsReceiver extends BroadcastReceiver {
 
     private void doWork(Context context, String code) {
         Log.i(TAG, "接收到闪讯密码短信：" + code);
-        Intent singlenetIntent = new Intent(context, SinglenetService.class);
-        singlenetIntent.putExtra("code", code);
-        context.startService(singlenetIntent);
         ToastUtils.show(context, "获取到闪讯密码：" + code);
+        Intent intent = new Intent(context, SinglenetService.class);
+        intent.putExtra("code", code);
+        context.startService(intent);
     }
 
     private SmsMessage[] getMessagesFromIntent(Intent intent) {

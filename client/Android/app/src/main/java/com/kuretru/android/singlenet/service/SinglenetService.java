@@ -2,7 +2,6 @@ package com.kuretru.android.singlenet.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -28,9 +27,8 @@ public class SinglenetService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Bundle bundle = intent.getExtras();
-        String code = bundle.getString("code");
-        Log.d(TAG, "获取到闪讯密码：" + code);
+        String code = intent.getStringExtra("code");
+        Log.d(TAG, "开始更新密码：" + code);
         NetworkOption networkOption = new NetworkOption(null, code);
 
         ServerConfig serverConfig = ConfigUtils.loadServerConfig(this);

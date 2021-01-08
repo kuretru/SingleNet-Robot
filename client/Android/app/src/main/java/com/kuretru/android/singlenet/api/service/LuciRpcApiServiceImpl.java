@@ -9,6 +9,7 @@ import com.kuretru.android.singlenet.entity.NetworkOption;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.util.RetrofitUtils;
+import com.kuretru.android.singlenet.util.SinglenetUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 
 import java.util.Map;
@@ -88,13 +89,7 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
             throw new ApiServiceException("该接口不存在");
         }
         Map<String, Object> data = StringUtils.jsonToMap(json);
-        if (data.containsKey("up")) {
-            Object up = data.get("up");
-            if (up instanceof Boolean && (boolean) up) {
-                return InterfaceStatusEnum.UP;
-            }
-        }
-        return InterfaceStatusEnum.DOWN;
+        return SinglenetUtils.parseInterfaceStatus(data);
     }
 
     @Override

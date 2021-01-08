@@ -8,6 +8,7 @@ import com.kuretru.android.singlenet.entity.RestfulApiResponse;
 import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.util.RetrofitUtils;
+import com.kuretru.android.singlenet.util.SinglenetUtils;
 
 import java.util.Map;
 
@@ -39,23 +40,13 @@ public class RestfulApiServiceImpl implements SinglenetApiService {
     @Override
     public InterfaceStatusEnum getInterfaceStatus() throws ApiServiceException {
         RestfulApiResponse<Map<String, Object>> response = RetrofitUtils.syncExecute(manager.getInterfaceStatus());
-        return parseInterfaceStatus(response.getData());
+        return SinglenetUtils.parseInterfaceStatus(response.getData());
     }
 
     @Override
     public InterfaceStatusEnum setInterfaceUp() throws ApiServiceException {
         RestfulApiResponse<Map<String, Object>> response = RetrofitUtils.syncExecute(manager.setInterfaceUp());
-        return parseInterfaceStatus(response.getData());
-    }
-
-    private InterfaceStatusEnum parseInterfaceStatus(Map<String, Object> data) {
-        if (data.containsKey("up")) {
-            Object up = data.get("up");
-            if (up instanceof Boolean && (boolean) up) {
-                return InterfaceStatusEnum.UP;
-            }
-        }
-        return InterfaceStatusEnum.DOWN;
+        return SinglenetUtils.parseInterfaceStatus(response.getData());
     }
 
 }

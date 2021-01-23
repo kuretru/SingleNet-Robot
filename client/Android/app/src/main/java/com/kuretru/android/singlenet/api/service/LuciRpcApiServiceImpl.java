@@ -51,29 +51,27 @@ public class LuciRpcApiServiceImpl implements SinglenetApiService {
     @Override
     public NetworkOption setNetworkOption(NetworkOption networkOption) throws ApiServiceException {
         boolean changed = false;
-
         if (!StringUtils.isNullOrBlank(networkOption.getUsername())) {
             Call<LuciRpcResponse> call = manager.setUsername(networkOption.getUsername().trim());
             LuciRpcResponse response = RetrofitUtils.syncExecute(call);
-            if (!"true".equalsIgnoreCase(response.getResult())) {
-                throw new ApiServiceException("更新用户名失败：" + response.getResult());
+            if (response.getError() != null) {
+                throw new ApiServiceException("更新用户名失败：" + response.getError());
             }
             changed = true;
         }
         if (!StringUtils.isNullOrBlank(networkOption.getPassword())) {
             Call<LuciRpcResponse> call = manager.setPassword(networkOption.getPassword().trim());
             LuciRpcResponse response = RetrofitUtils.syncExecute(call);
-            if (!"true".equalsIgnoreCase(response.getResult())) {
-                throw new ApiServiceException("更新密码失败：" + response.getResult());
+            if (response.getError() != null) {
+                throw new ApiServiceException("更新密码失败：" + response.getError());
             }
             changed = true;
         }
-
         if (changed) {
             Call<LuciRpcResponse> call = manager.commit();
             LuciRpcResponse response = RetrofitUtils.syncExecute(call);
-            if (!"true".equalsIgnoreCase(response.getResult())) {
-                throw new ApiServiceException("保存配置失败：" + response.getResult());
+            if (response.getError() != null) {
+                throw new ApiServiceException("保存配置失败：" + response.getError());
             }
         }
         return getNetworkOption();

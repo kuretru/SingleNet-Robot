@@ -23,12 +23,8 @@ public class LuciRpcRequestFactory {
     }
 
     public static LuciRpcRequest setUsername(String networkInterface, String username) {
-        List<String> params = new ArrayList<>(4);
-        params.add("network");
-        params.add(networkInterface);
-        params.add("username");
-        params.add(username);
-        return new LuciRpcRequest(3, "set", params);
+        String command = "/sbin/uci set network." + networkInterface + ".username=" + username;
+        return new LuciRpcRequest(3, "exec", buildParams(command));
     }
 
     public static LuciRpcRequest getPassword(String networkInterface) {
@@ -40,30 +36,29 @@ public class LuciRpcRequestFactory {
     }
 
     public static LuciRpcRequest setPassword(String networkInterface, String password) {
-        List<String> params = new ArrayList<>(4);
-        params.add("network");
-        params.add(networkInterface);
-        params.add("password");
-        params.add(password);
-        return new LuciRpcRequest(5, "set", params);
+        String command = "/sbin/uci set network." + networkInterface + ".password=" + password;
+        return new LuciRpcRequest(5, "exec", buildParams(command));
     }
 
     public static LuciRpcRequest commit() {
-        List<String> params = new ArrayList<>(1);
-        params.add("network");
-        return new LuciRpcRequest(6, "commit", params);
+        String command = "/sbin/uci commit network";
+        return new LuciRpcRequest(6, "exec", buildParams(command));
     }
 
     public static LuciRpcRequest getInterfaceStatus(String networkInterface) {
-        List<String> params = new ArrayList<>(1);
-        params.add("/sbin/ifstatus " + networkInterface);
-        return new LuciRpcRequest(7, "exec", params);
+        String command = "/sbin/ifstatus " + networkInterface;
+        return new LuciRpcRequest(7, "exec", buildParams(command));
     }
 
     public static LuciRpcRequest setInterfaceUp(String networkInterface) {
+        String command = "/sbin/ifdown " + networkInterface + " && /sbin/ifup " + networkInterface;
+        return new LuciRpcRequest(8, "exec", buildParams(command));
+    }
+
+    private static List<String> buildParams(String command) {
         List<String> params = new ArrayList<>(1);
-        params.add("/sbin/ifdown " + networkInterface + " && /sbin/ifup " + networkInterface);
-        return new LuciRpcRequest(8, "exec", params);
+        params.add(command);
+        return params;
     }
 
 }

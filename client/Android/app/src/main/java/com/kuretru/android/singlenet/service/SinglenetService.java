@@ -46,7 +46,7 @@ public class SinglenetService extends IntentService {
                 apiService.setInterfaceUp();
             }
         } catch (ApiServiceException e) {
-            toastShow("更新密码失败：" + e.getMessage());
+            toastShow(e.getMessage());
         }
     }
 

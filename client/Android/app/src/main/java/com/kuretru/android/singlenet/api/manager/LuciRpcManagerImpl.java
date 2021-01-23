@@ -55,7 +55,7 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
     @Override
     public Call<LuciRpcResponse> setUsername(String username) {
         LuciRpcRequest request = LuciRpcRequestFactory.setUsername(serverConfig.getNetworkInterface(), username);
-        return mapper.uci(request, authToken);
+        return mapper.sys(request, authToken);
     }
 
     @Override
@@ -67,13 +67,13 @@ public class LuciRpcManagerImpl implements LuciRpcManager {
     @Override
     public Call<LuciRpcResponse> setPassword(String password) {
         LuciRpcRequest request = LuciRpcRequestFactory.setPassword(serverConfig.getNetworkInterface(), password);
-        return mapper.uci(request, authToken);
+        return mapper.sys(request, authToken);
     }
 
     @Override
     public Call<LuciRpcResponse> commit() {
         LuciRpcRequest request = LuciRpcRequestFactory.commit();
-        return mapper.uci(request, authToken);
+        return mapper.sys(request, authToken);
     }
 
     @Override

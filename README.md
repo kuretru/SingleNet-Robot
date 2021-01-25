@@ -50,7 +50,7 @@ wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Pyt
 ```
 
 2. (可选)修改`PORT`字段为你喜欢的端口
-3. (可选)修改通信密钥`SECRET`字段为你喜欢的任意字符串，防止他人恶意调用APi服务
+3. (可选)修改通信密钥`SECRET`字段为你喜欢的任意字符串，防止他人恶意调用API服务
 4. 设置开机自动启动
    1. 打开OpenWrt LuCI -> `系统` -> `启动脚本` -> `本地启动脚本`
    2. 于`exit 0`前追加
@@ -88,6 +88,7 @@ wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Pyt
 
 ## 版本历史
 
+* v3.1 2021-01-25
 * v3.0 2020-10-23
 * v2.4 2020-01-15
 * v2.3 2019-05-25

@@ -29,10 +29,16 @@
                 android:id="@+id/etServerUrl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".70"
+                android:layout_weight=".60"
                 android:ems="10"
                 android:hint="@string/config_server_url_hint"
                 android:inputType="textUri" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".10"/>
         </LinearLayout>
 
         <LinearLayout

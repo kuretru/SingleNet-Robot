@@ -16,5 +16,9 @@ public class SystemConstants {
     public static final String CONFIG_USERNAME = "config_username";
     public static final String CONFIG_PASSWORD = "config_password";
     public static final String CONFIG_AUTH_TOKEN = "config_auth_token";
+    public static final String CONFIG_SIM_CARD = "config_sim_card";
+    public static final String CONFIG_SIM_CARD_DEFAULT = "default";
+    public static final String CONFIG_SIM_CARD_1 = "sim_card_1";
+    public static final String CONFIG_SIM_CARD_2 = "sim_card_2";
 
 }

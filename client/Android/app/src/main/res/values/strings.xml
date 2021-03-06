@@ -27,6 +27,11 @@
     <string name="config_auth_token">　通讯密钥：</string>
     <string name="config_auth_token_hint">e.g. 123456</string>
 
+    <string name="config_sim_card">　SIM卡选择：</string>
+    <string name="config_sim_card_default">默认</string>
+    <string name="config_sim_card_1">卡1</string>
+    <string name="config_sim_card_2">卡2</string>
+
     <string name="config_clear">清空</string>
     <string name="config_test">测试服务器</string>
     <string name="config_save">保存并退出</string>

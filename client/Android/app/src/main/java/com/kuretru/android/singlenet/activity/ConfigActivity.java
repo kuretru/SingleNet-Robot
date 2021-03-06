@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SubscriptionManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,6 +48,7 @@ public class ConfigActivity extends AppCompatActivity {
     private Spinner spinner;
     private RadioGroup rgVerifySsl;
     private RadioGroup rgServerType;
+    private RadioGroup rgSimCard;
     private LinearLayout llUsername;
     private LinearLayout llPassword;
     private LinearLayout llAuthToken;
@@ -174,6 +176,21 @@ public class ConfigActivity extends AppCompatActivity {
                 return false;
             }
         }
+
+        if (R.id.rbSimCardDefault != rgSimCard.getCheckedRadioButtonId()) {
+            int slotId = 0;
+            if (R.id.rbSimCard2 == rgSimCard.getCheckedRadioButtonId()) {
+                slotId = 1;
+            }
+            SubscriptionManager subscriptionManager = SubscriptionManager.from(this);
+            int[] subIds = subscriptionManager.getSubscriptionIds(slotId);
+            if (subIds == null || subIds.length == 0) {
+                ToastUtils.show(getApplicationContext(), "卡槽" + (slotId + 1) + "无SIM卡");
+                rgSimCard.check(R.id.rbSimCardDefault);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -198,6 +215,13 @@ public class ConfigActivity extends AppCompatActivity {
             serverConfig.setServerType(SystemConstants.CONFIG_SERVER_TYPE_LUCI_RPC);
         } else {
             serverConfig.setServerType(SystemConstants.CONFIG_SERVER_TYPE_RESTFUL_API);
+        }
+        if (R.id.rbSimCard1 == rgSimCard.getCheckedRadioButtonId()) {
+            serverConfig.setSimCard(SystemConstants.CONFIG_SIM_CARD_1);
+        } else if (R.id.rbSimCard2 == rgSimCard.getCheckedRadioButtonId()) {
+            serverConfig.setSimCard(SystemConstants.CONFIG_SIM_CARD_2);
+        } else {
+            serverConfig.setSimCard(SystemConstants.CONFIG_SIM_CARD_DEFAULT);
         }
 
         List<String> serverUrlHistory = new ArrayList<>();
@@ -244,6 +268,13 @@ public class ConfigActivity extends AppCompatActivity {
             this.onRadioGroupChecked(R.id.rbRestfulApi);
             this.rgServerType.check(R.id.rbRestfulApi);
         }
+        if (SystemConstants.CONFIG_SIM_CARD_1.equals(serverConfig.getSimCard())) {
+            this.rgSimCard.check(R.id.rbSimCard1);
+        } else if (SystemConstants.CONFIG_SIM_CARD_2.equals(serverConfig.getSimCard())) {
+            this.rgSimCard.check(R.id.rbSimCard2);
+        } else {
+            this.rgSimCard.check(R.id.rbSimCardDefault);
+        }
     }
 
     /**
@@ -284,6 +315,7 @@ public class ConfigActivity extends AppCompatActivity {
         this.spinner = this.findViewById(R.id.spinner);
         this.rgVerifySsl = this.findViewById(R.id.rgVerifySsl);
         this.rgServerType = this.findViewById(R.id.rgServerType);
+        this.rgSimCard = this.findViewById(R.id.rgSimCard);
         this.llUsername = this.findViewById(R.id.llUsername);
         this.llPassword = this.findViewById(R.id.llPassword);
         this.llAuthToken = this.findViewById(R.id.llAuthToken);

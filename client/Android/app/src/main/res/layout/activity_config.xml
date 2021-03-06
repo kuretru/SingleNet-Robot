@@ -38,7 +38,7 @@
                 android:id="@+id/spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".10"/>
+                android:layout_weight=".10" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,11 +82,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:paddingBottom="20dp"
             android:layout_gravity="center"
+            android:background="@drawable/border"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/tvNetworkInterface"
@@ -109,10 +109,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="20dp">
 
             <TextView
                 android:id="@+id/tvServerType"
@@ -201,8 +201,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@drawable/border"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/tvAuthToken"
@@ -222,12 +224,60 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="20dp">
+
+            <TextView
+                android:id="@+id/tvSimCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_sim_card" />
+
+            <RadioGroup
+                android:id="@+id/rgSimCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".70"
+                android:checkedButton="@id/rbSimCardDefault"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbSimCardDefault"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/config_sim_card_default" />
+
+                <RadioButton
+                    android:id="@+id/rbSimCard1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/config_sim_card_1" />
+
+                <RadioButton
+                    android:id="@+id/rbSimCard2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:text="@string/config_sim_card_2" />
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
             style="?attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="20dp">
 
             <Button
                 android:id="@+id/btnClear"
@@ -255,7 +305,6 @@
                 android:layout_weight="1"
                 android:onClick="btnSave_onClick"
                 android:text="@string/config_save" />
-
         </LinearLayout>
 
     </LinearLayout>

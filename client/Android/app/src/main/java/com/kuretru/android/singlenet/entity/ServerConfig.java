@@ -31,4 +31,7 @@ public class ServerConfig {
     /** 服务端通信密钥 */
     private String authToken;
 
+    /** 发送短信的SIM卡 */
+    private String simCard;
+
 }

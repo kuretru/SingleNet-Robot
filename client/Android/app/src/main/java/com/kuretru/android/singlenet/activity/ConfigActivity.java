@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.telephony.SubscriptionManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +26,7 @@ import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.factory.SinglenetApiServiceFactory;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
+import com.kuretru.android.singlenet.util.SubscriptionUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public class ConfigActivity extends AppCompatActivity {
 
-    private static final String[] permissionsList = new String[]{
+    private static final String[] PERMISSIONS_LIST = new String[]{
             Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS
     };
     private SharedPreferences sharedPreferences = null;
@@ -182,11 +182,15 @@ public class ConfigActivity extends AppCompatActivity {
             if (R.id.rbSimCard2 == rgSimCard.getCheckedRadioButtonId()) {
                 slotId = 1;
             }
-            SubscriptionManager subscriptionManager = SubscriptionManager.from(this);
-            int[] subIds = subscriptionManager.getSubscriptionIds(slotId);
-            if (subIds == null || subIds.length == 0) {
+            int subId = SubscriptionUtils.getSubId(this, slotId);
+            if (-1 == subId) {
                 ToastUtils.show(getApplicationContext(), "卡槽" + (slotId + 1) + "无SIM卡");
                 rgSimCard.check(R.id.rbSimCardDefault);
+                return false;
+            } else if (-2 == subId) {
+                ToastUtils.show(getApplicationContext(), "Android 10以下版本需要赋予READ_PHONE_STATE权限");
+                rgSimCard.check(R.id.rbSimCardDefault);
+                checkPermission(new String[]{Manifest.permission.READ_PHONE_STATE});
                 return false;
             }
         }
@@ -285,11 +289,11 @@ public class ConfigActivity extends AppCompatActivity {
     private void saveServerConfig(ServerConfig serverConfig) {
         ConfigUtils.saveServerConfig(getApplicationContext(), serverConfig);
         ToastUtils.show(getApplicationContext(), "配置信息保存成功！");
-        checkPermission();
+        checkPermission(ConfigActivity.PERMISSIONS_LIST);
         this.finish();
     }
 
-    private void checkPermission() {
+    private void checkPermission(String[] permissionsList) {
         List<String> permissions = new ArrayList<>();
         for (String permission : permissionsList) {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), permission) != PackageManager.PERMISSION_GRANTED) {

@@ -85,13 +85,12 @@ public class MainActivity extends AppCompatActivity {
     public void btnSend_onClick(View view) {
         WorkRequest workRequest = OneTimeWorkRequest.from(SendSmsWorker.class);
         WorkManager.getInstance(this).enqueue(workRequest);
-        ToastUtils.show(context, "获取闪讯密码短信发送成功！");
     }
 
     public void btnAlarm_onClick(View view) {
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest
-                .Builder(SendSmsWorker.class, 15, TimeUnit.MINUTES)
-                .setInitialDelay(1, TimeUnit.MINUTES)
+                .Builder(SendSmsWorker.class, 28, TimeUnit.HOURS)
+                //.setInitialDelay(12, TimeUnit.HOURS)
                 .build();
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 SystemConstants.SINGLENET_WORKER_NAME,

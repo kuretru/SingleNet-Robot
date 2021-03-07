@@ -2,6 +2,8 @@ package com.kuretru.android.singlenet.worker;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -14,6 +16,7 @@ import com.kuretru.android.singlenet.receiver.SmsReceiver;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.SubscriptionUtils;
+import com.kuretru.android.singlenet.util.ToastUtils;
 
 public class SendSmsWorker extends Worker {
 
@@ -31,26 +34,36 @@ public class SendSmsWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.i(TAG, "开始发送获取闪讯密码短信");
         String simCard = ConfigUtils.loadServerConfig(this.getApplicationContext()).getSimCard();
-        SmsManager smsManager = null;
+        SmsManager smsManager;
         if (StringUtils.isNullOrBlank(simCard) || SystemConstants.CONFIG_SIM_CARD_DEFAULT.equals(simCard)) {
             smsManager = SmsManager.getDefault();
         } else {
             int slotId = Integer.parseInt(simCard.substring(simCard.length() - 1));
             int subId = SubscriptionUtils.getSubId(this.getApplicationContext(), slotId - 1);
             if (-1 == subId) {
-                Log.e(TAG, "卡槽" + slotId + "中不存在SIM卡");
+                String error = "卡槽" + slotId + "中不存在SIM卡";
+                Log.e(TAG, error);
+                toastShow(error);
                 return Result.failure();
             } else if (-2 == subId) {
-                Log.e(TAG, "没有READ_PHONE_STATE权限");
+                String error = "请赋予闪讯机器人READ_PHONE_STATE权限";
+                Log.e(TAG, error);
+                toastShow(error);
                 return Result.failure();
             }
             smsManager = SmsManager.getSmsManagerForSubscriptionId(subId);
         }
         smsManager.sendTextMessage(SINGLENET_MOBILE, null, SINGLENET_MESSAGE, null, null);
         Log.i(TAG, "成功发送获取闪讯密码短信");
+        toastShow("获取闪讯密码短信发送成功！");
         return Result.success();
+    }
+
+    private void toastShow(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            ToastUtils.show(this.getApplicationContext(), message);
+        });
     }
 
 }

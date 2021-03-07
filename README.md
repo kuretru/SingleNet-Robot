@@ -88,6 +88,7 @@ wget https://raw.githubusercontent.com/kuretru/SingleNet-Robot/master/server/Pyt
 
 ## 版本历史
 
+* v3.2 2021-03-07
 * v3.1 2021-01-25
 * v3.0 2020-10-23
 * v2.4 2020-01-15

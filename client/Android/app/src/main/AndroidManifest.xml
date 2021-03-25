@@ -25,23 +25,13 @@
                 android:resource="@xml/singlenet_app_widget_info" />
         </receiver>
 
-        <service android:name=".service.SmsService" />
-        <service android:name=".service.SinglenetService" />
-
         <activity android:name=".activity.ConfigActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver android:name=".receiver.AlarmReceiver">
-            <intent-filter>
-                <action android:name="com.kuretru.android.singlenet.receiver.AlarmReceiver" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

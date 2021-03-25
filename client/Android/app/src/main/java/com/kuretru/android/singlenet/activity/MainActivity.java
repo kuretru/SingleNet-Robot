@@ -30,7 +30,6 @@ import com.kuretru.android.singlenet.entity.ServerConfig;
 import com.kuretru.android.singlenet.entity.SystemLog;
 import com.kuretru.android.singlenet.exception.ApiServiceException;
 import com.kuretru.android.singlenet.factory.SinglenetApiServiceFactory;
-import com.kuretru.android.singlenet.service.AlarmService;
 import com.kuretru.android.singlenet.util.ConfigUtils;
 import com.kuretru.android.singlenet.util.StringUtils;
 import com.kuretru.android.singlenet.util.ToastUtils;
@@ -168,16 +167,6 @@ public class MainActivity extends AppCompatActivity {
             btnCancel.setEnabled(true);
             btnUpdate.setEnabled(true);
             this.serverConfig = serverConfig;
-        }
-    }
-
-    private void loadAlarmStatus() {
-        AlarmService alarmService = new AlarmService(context);
-        if (alarmService.isRegistered()) {
-            long nextTime = alarmService.getNextTime();
-            tvAlarm.setText(("下一次任务时间：" + StringUtils.timestampToString(nextTime)));
-        } else {
-            tvAlarm.setText("定时任务未注册！！");
         }
     }
 

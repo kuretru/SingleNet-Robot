@@ -7,8 +7,13 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.kuretru.android.singlenet.service.SinglenetService;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+
 import com.kuretru.android.singlenet.util.ToastUtils;
+import com.kuretru.android.singlenet.worker.SinglenetWorker;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,9 +50,14 @@ public class SmsReceiver extends BroadcastReceiver {
         Log.i(TAG, "接收到闪讯密码短信：" + code);
         ToastUtils.show(context, "获取到闪讯密码：" + code);
         context.unregisterReceiver(this);
-        Intent intent = new Intent(context, SinglenetService.class);
-        intent.putExtra("code", code);
-        context.startService(intent);
+
+        WorkRequest workRequest = new OneTimeWorkRequest.Builder(SinglenetWorker.class)
+                .setInputData(
+                        new Data.Builder()
+                                .putString("code", code)
+                                .build()
+                ).build();
+        WorkManager.getInstance(context).enqueue(workRequest);
     }
 
     private SmsMessage[] getMessagesFromIntent(Intent intent) {

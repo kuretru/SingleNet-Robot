@@ -3,7 +3,7 @@
 
 """
 SingleNet Robot Python3 Server
-Version: 3.2
+Version: 3.3
 Author: Eugene Wu <kuretru@gmail.com>
 URL: https://github.com/kuretru/SingleNet-Robot
 """

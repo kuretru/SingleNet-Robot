@@ -30,6 +30,7 @@ public class ConfigUtils {
         serverConfig.setPassword(sharedPreferences.getString(SystemConstants.CONFIG_PASSWORD, ""));
         serverConfig.setAuthToken(sharedPreferences.getString(SystemConstants.CONFIG_AUTH_TOKEN, ""));
         serverConfig.setSimCard(sharedPreferences.getString(SystemConstants.CONFIG_SIM_CARD, SystemConstants.CONFIG_SIM_CARD_DEFAULT));
+        serverConfig.setInterval(sharedPreferences.getInt(SystemConstants.CONFIG_INTERVAL, SystemConstants.CONFIG_INTERVAL_DEFAULT));
         return serverConfig;
     }
 
@@ -51,6 +52,7 @@ public class ConfigUtils {
         editor.putString(SystemConstants.CONFIG_PASSWORD, serverConfig.getPassword());
         editor.putString(SystemConstants.CONFIG_AUTH_TOKEN, serverConfig.getAuthToken());
         editor.putString(SystemConstants.CONFIG_SIM_CARD, serverConfig.getSimCard());
+        editor.putInt(SystemConstants.CONFIG_INTERVAL, serverConfig.getInterval());
         editor.apply();
     }
 
@@ -71,6 +73,7 @@ public class ConfigUtils {
         editor.remove(SystemConstants.CONFIG_PASSWORD);
         editor.remove(SystemConstants.CONFIG_AUTH_TOKEN);
         editor.remove(SystemConstants.CONFIG_SIM_CARD);
+        editor.remove(SystemConstants.CONFIG_INTERVAL);
         editor.apply();
     }
 

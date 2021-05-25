@@ -269,8 +269,39 @@
                     android:layout_weight=".50"
                     android:text="@string/config_sim_card_2" />
             </RadioGroup>
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/llInterval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/tvInterval"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_interval" />
+
+            <EditText
+                android:id="@+id/etInterval"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".40"
+                android:ems="10"
+                android:hint="@string/config_interval_hint"
+                android:inputType="number"
+                android:text="@string/config_interval_text" />
+
+            <TextView
+                android:id="@+id/tvIntervalUnit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".30"
+                android:text="@string/config_interval_unit" />
         </LinearLayout>
 
         <LinearLayout

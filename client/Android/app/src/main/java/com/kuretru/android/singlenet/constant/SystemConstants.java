@@ -20,5 +20,7 @@ public class SystemConstants {
     public static final String CONFIG_SIM_CARD_DEFAULT = "default";
     public static final String CONFIG_SIM_CARD_1 = "sim_card_1";
     public static final String CONFIG_SIM_CARD_2 = "sim_card_2";
+    public static final String CONFIG_INTERVAL = "config_interval";
+    public static final Integer CONFIG_INTERVAL_DEFAULT = 28;
 
 }

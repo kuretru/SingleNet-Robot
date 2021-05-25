@@ -45,6 +45,7 @@ public class ConfigActivity extends AppCompatActivity {
     private EditText etUsername;
     private EditText etPassword;
     private EditText etAuthToken;
+    private EditText etInterval;
     private Spinner spinner;
     private RadioGroup rgVerifySsl;
     private RadioGroup rgServerType;
@@ -177,6 +178,12 @@ public class ConfigActivity extends AppCompatActivity {
             }
         }
 
+        if (serverConfig.getInterval() == 0) {
+            ToastUtils.show(getApplicationContext(), "时间间隔不正确！");
+            etInterval.requestFocus();
+            return false;
+        }
+
         if (R.id.rbSimCardDefault != rgSimCard.getCheckedRadioButtonId()) {
             int slotId = 0;
             if (R.id.rbSimCard2 == rgSimCard.getCheckedRadioButtonId()) {
@@ -227,6 +234,8 @@ public class ConfigActivity extends AppCompatActivity {
         } else {
             serverConfig.setSimCard(SystemConstants.CONFIG_SIM_CARD_DEFAULT);
         }
+        String interval = etInterval.getText().toString().trim();
+        serverConfig.setInterval(StringUtils.isNullOrBlank(interval) ? 0 : Integer.valueOf(interval));
 
         List<String> serverUrlHistory = new ArrayList<>();
         serverUrlHistory.add(serverConfig.getServerUrl());
@@ -279,6 +288,7 @@ public class ConfigActivity extends AppCompatActivity {
         } else {
             this.rgSimCard.check(R.id.rbSimCardDefault);
         }
+        this.etInterval.setText(serverConfig.getInterval().toString());
     }
 
     /**
@@ -316,6 +326,7 @@ public class ConfigActivity extends AppCompatActivity {
         this.etUsername = this.findViewById(R.id.etUsername);
         this.etPassword = this.findViewById(R.id.etPassword);
         this.etAuthToken = this.findViewById(R.id.etAuthToken);
+        this.etInterval = this.findViewById(R.id.etInterval);
         this.spinner = this.findViewById(R.id.spinner);
         this.rgVerifySsl = this.findViewById(R.id.rgVerifySsl);
         this.rgServerType = this.findViewById(R.id.rgServerType);

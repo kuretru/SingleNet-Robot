@@ -34,4 +34,7 @@ public class ServerConfig {
     /** 发送短信的SIM卡 */
     private String simCard;
 
+    /** 定时间隔 */
+    private Integer interval;
+
 }

@@ -32,6 +32,11 @@
     <string name="config_sim_card_1">卡1</string>
     <string name="config_sim_card_2">卡2</string>
 
+    <string name="config_interval">　定时间隔：</string>
+    <string name="config_interval_hint">e.g. 28</string>
+    <string name="config_interval_text">28</string>
+    <string name="config_interval_unit">小时</string>
+
     <string name="config_clear">清空</string>
     <string name="config_test">测试服务器</string>
     <string name="config_save">保存并退出</string>

@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnAlarm_onClick(View view) {
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest
-                .Builder(SendSmsWorker.class, 28, TimeUnit.HOURS)
+                .Builder(SendSmsWorker.class, this.serverConfig.getInterval(), TimeUnit.HOURS)
                 //.setInitialDelay(12, TimeUnit.HOURS)
                 .build();
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
